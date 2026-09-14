@@ -12,6 +12,8 @@
   <meta name="description" content="Kelo Associates — inbox, CRM, agenda y operación comercial mobile-first.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="organizer.css">
   <title>Kelo Associates</title>
 </head>
 <body>
@@ -122,33 +124,16 @@
   </nav>
 </div>
 
-<!-- Chat -->
 <div class="sheetback" id="chatSheet" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="sheet"><div class="handle"></div><div class="sheethead"><div><h3 id="chatTitle">Chat</h3><p class="muted" id="chatSubtitle"></p></div><button class="iconbtn" data-close="chatSheet" aria-label="Cerrar">×</button></div><div class="actions" id="chatActions"></div><div class="chatthread" id="chatThread"></div><form class="composer" id="messageForm"><input name="message" autocomplete="off" placeholder="Escribe un mensaje simulado…" aria-label="Mensaje"><button class="primary">Enviar</button></form></div></div>
-
-<!-- Cliente -->
 <div class="sheetback" id="clientSheet" role="dialog" aria-modal="true" aria-label="Perfil del cliente"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Cliente</h3><button class="iconbtn" data-close="clientSheet" aria-label="Cerrar">×</button></div><div id="clientContent"></div></div></div>
-
-<!-- Nueva cita -->
-<div class="sheetback" id="appointmentSheet" role="dialog" aria-modal="true" aria-label="Nueva cita"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva cita</h3><button class="iconbtn" data-close="appointmentSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="appointmentForm">
-  <div class="field"><label>Cliente</label><select name="clientId" id="appointmentClient" required></select></div>
-  <div class="split"><div class="field"><label>Fecha</label><input type="date" name="date" required></div><div class="field"><label>Hora</label><input type="time" name="time" required></div></div>
-  <div class="field"><label>Lugar</label><input name="location" placeholder="Punto de encuentro" required></div>
-  <div class="field"><label>Qué debo llevar</label><input name="items" placeholder="Daytona negro, Submariner, caja"></div>
-  <div class="split"><div class="field"><label>Valor estimado</label><input name="value" type="number" min="0" step="1" inputmode="decimal" placeholder="200"></div><div class="field"><label>Responsable</label><select name="agent" id="appointmentAgent"></select></div></div>
-  <div class="field"><label>Notas</label><textarea name="notes" placeholder="Detalles que no se pueden olvidar"></textarea></div>
-  <button class="primary wide" type="submit">Guardar cita y recordatorios</button>
-</form></div></div>
-
-<!-- Resultado -->
+<div class="sheetback" id="appointmentSheet" role="dialog" aria-modal="true" aria-label="Nueva cita"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva cita</h3><button class="iconbtn" data-close="appointmentSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="appointmentForm"><div class="field"><label>Cliente</label><select name="clientId" id="appointmentClient" required></select></div><div class="split"><div class="field"><label>Fecha</label><input type="date" name="date" required></div><div class="field"><label>Hora</label><input type="time" name="time" required></div></div><div class="field"><label>Lugar</label><input name="location" placeholder="Punto de encuentro" required></div><div class="field"><label>Qué debo llevar</label><input name="items" placeholder="Daytona negro, Submariner, caja"></div><div class="split"><div class="field"><label>Valor estimado</label><input name="value" type="number" min="0" step="1" inputmode="decimal" placeholder="200"></div><div class="field"><label>Responsable</label><select name="agent" id="appointmentAgent"></select></div></div><div class="field"><label>Notas</label><textarea name="notes" placeholder="Detalles que no se pueden olvidar"></textarea></div><button class="primary wide" type="submit">Guardar cita y recordatorios</button></form></div></div>
 <div class="sheetback" id="resultSheet" role="dialog" aria-modal="true" aria-label="Resultado de la cita"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Resultado de la cita</h3><button class="iconbtn" data-close="resultSheet" aria-label="Cerrar">×</button></div><div id="resultContext" class="notice" style="margin-bottom:10px"></div><div class="resultgrid"><button class="primary" data-result="sold">✓ Vendido</button><button class="secondary" data-result="followup">↻ Follow-up</button><button class="danger" data-result="cancelled">× Cancelado</button><button class="ghost" data-result="no_show">No-show</button></div></div></div>
-
-<!-- Tarea -->
 <div class="sheetback" id="taskSheet" role="dialog" aria-modal="true" aria-label="Nueva tarea"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva tarea</h3><button class="iconbtn" data-close="taskSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="taskForm"><div class="field"><label>Título</label><input name="title" required placeholder="Confirmar cliente"></div><div class="field"><label>Cliente</label><select name="clientId" id="taskClient"></select></div><div class="split"><div class="field"><label>Fecha</label><input name="date" type="date" required></div><div class="field"><label>Hora</label><input name="time" type="time" required></div></div><div class="field"><label>Prioridad</label><select name="priority"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></div><button class="primary wide">Guardar tarea</button></form></div></div>
-
-<!-- Cliente nuevo -->
 <div class="sheetback" id="newClientSheet" role="dialog" aria-modal="true" aria-label="Nuevo cliente"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nuevo cliente</h3><button class="iconbtn" data-close="newClientSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="clientForm"><div class="field"><label>Nombre</label><input name="name" autocomplete="name" required></div><div class="field"><label>Teléfono</label><input name="phone" autocomplete="tel" inputmode="tel" required></div><div class="field"><label>Email</label><input name="email" type="email" autocomplete="email"></div><div class="split"><div class="field"><label>Canal</label><select name="channel"><option value="wa1">WhatsApp 1</option><option value="wa2">WhatsApp 2</option><option value="wa3">WhatsApp 3</option></select></div><div class="field"><label>Fuente</label><input name="source" placeholder="Marketplace"></div></div><div class="field"><label>Interés inicial</label><input name="interest" placeholder="Daytona negro"></div><button class="primary wide">Crear cliente</button></form></div></div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="auth.js"></script>
 <script type="module" src="app.js"></script>
+<script type="module" src="organizer.js"></script>
 </body>
 </html>
