@@ -55,7 +55,12 @@
     <section class="operator-view" data-view-panel="chats"><div class="view-head"><h2>Chats</h2><p>Intención detectada, porcentaje HOT y próximo movimiento.</p></div><div id="chatCards" class="stack"></div></section>
     <section class="operator-view" data-view-panel="orders"><div class="view-head"><h2>Orders</h2><p>Reserved → Paid → Ready → Delivery → Delivered.</p></div><div id="orderCards" class="stack"></div></section>
     <section class="operator-view" data-view-panel="products"><div class="view-head"><h2>Products</h2><p>Stock cruzado con demanda real para saber qué comprar.</p></div><div id="productCards" class="stack"></div></section>
-    <section class="operator-view" data-view-panel="money"><div class="view-head"><h2>Money</h2><p>Cobrado, pendiente y ventas que necesitan collection.</p></div><div class="kpi-grid" id="moneyKpis"></div><div id="moneyCards" class="stack"></div></section>
+    <section class="operator-view" data-view-panel="money">
+      <div class="view-head"><h2>Money</h2><p>Cobrado, pendiente y ventas que necesitan collection.</p></div>
+      <div class="kpi-grid" id="moneyKpis"></div>
+      <div id="moneyCards" class="stack"></div>
+      <div id="collectionsLedger"></div>
+    </section>
   </main>
 </div>
 
@@ -116,5 +121,6 @@
 <script type="module" src="operator.js"></script>
 <script type="module" src="task-builder.js"></script>
 <script type="module" src="next-action-engine.js"></script>
+<script type="module" src="collections-ledger.js"></script>
 </body>
 </html>
