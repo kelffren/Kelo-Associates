@@ -1,331 +1,142 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0f8f61" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Kelo Associates — V0.1</title>
-  <style>
-    :root {
-      --bg:#f4f6f5;
-      --surface:#ffffff;
-      --surface-2:#eef3f0;
-      --text:#111815;
-      --muted:#6d7772;
-      --line:#dfe6e2;
-      --green:#0f8f61;
-      --green-2:#e7f7ef;
-      --blue:#2478f2;
-      --blue-2:#eaf2ff;
-      --orange:#d97706;
-      --orange-2:#fff4dd;
-      --red:#d64545;
-      --purple:#7357cc;
-      --shadow:0 14px 40px rgba(17,24,21,.08);
-      --radius:20px;
-      --nav-h:76px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-    button,input,select,textarea{font:inherit}
-    button{cursor:pointer}
-    .app{min-height:100dvh;max-width:1180px;margin:0 auto;background:var(--bg)}
-    .topbar{position:sticky;top:0;z-index:20;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(244,246,245,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(223,230,226,.8)}
-    .brandrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px;min-width:0}
-    .mark{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#0f8f61,#0a6848);color:white;font-weight:900;box-shadow:0 8px 20px rgba(15,143,97,.22)}
-    .brand h1{font-size:18px;line-height:1.05;margin:0}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
-    .iconbtn{width:42px;height:42px;border:1px solid var(--line);background:var(--surface);border-radius:14px;display:grid;place-items:center;color:var(--text)}
-    .channel-switch{display:flex;gap:7px;overflow:auto;padding-top:12px;scrollbar-width:none}.channel-switch::-webkit-scrollbar{display:none}
-    .pill{border:1px solid var(--line);background:var(--surface);padding:9px 13px;border-radius:999px;white-space:nowrap;color:var(--muted);font-weight:750;font-size:12px}
-    .pill.active{background:var(--green);border-color:var(--green);color:white;box-shadow:0 6px 16px rgba(15,143,97,.22)}
-    main{padding:16px 14px calc(var(--nav-h) + 24px + env(safe-area-inset-bottom))}
-    .screen{display:none}.screen.active{display:block}
-    .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:3px 2px 16px}.hero h2{font-size:29px;margin:0;letter-spacing:-.03em}.hero p{margin:5px 0 0;color:var(--muted);font-size:13px}.datebadge{background:var(--surface);border:1px solid var(--line);padding:10px 12px;border-radius:16px;font-weight:800;font-size:12px}
-    .grid{display:grid;gap:12px}.grid.two{grid-template-columns:1fr}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}.card.flat{box-shadow:none}
-    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 2px 10px}.section-title h3{margin:0;font-size:17px}.section-title button{border:0;background:none;color:var(--green);font-weight:800}
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:13px 10px;min-width:0}.kpi strong{display:block;font-size:23px;letter-spacing:-.03em}.kpi span{font-size:10px;color:var(--muted);line-height:1.2;display:block;margin-top:4px}
-    .appointment{display:grid;grid-template-columns:62px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.appointment:last-child{border-bottom:0;padding-bottom:0}.appointment:first-child{padding-top:0}
-    .time{font-weight:900;color:var(--green);font-size:13px}.appointment h4{margin:0;font-size:15px}.appointment p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.35}.status{padding:7px 9px;border-radius:999px;font-size:10px;font-weight:900;white-space:nowrap}.ready{background:var(--green-2);color:var(--green)}.pending{background:var(--orange-2);color:var(--orange)}
-    .bag-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.bag-header h3{margin:0}.progress{font-size:12px;font-weight:900;color:var(--green)}
-    .checkrow{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.checkrow:last-of-type{border-bottom:0}.checkrow input{width:21px;height:21px;accent-color:var(--green)}.checkrow label{flex:1;font-size:14px;font-weight:700}.checkrow small{color:var(--muted)}
-    .primary{width:100%;border:0;background:var(--green);color:white;font-weight:900;padding:14px 16px;border-radius:15px;margin-top:12px;box-shadow:0 8px 22px rgba(15,143,97,.22)}
-    .secondary{border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:850;padding:11px 13px;border-radius:14px}
-    .chatlist{overflow:hidden}.chat{display:grid;grid-template-columns:48px 1fr auto;gap:11px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer}.chat:last-child{border-bottom:0}.avatar{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#cfdad5,#edf3f0);display:grid;place-items:center;font-weight:900;color:#53605a}.chat h4{margin:0;font-size:14px}.chat p{margin:4px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}.chatmeta{text-align:right}.chatmeta time{font-size:10px;color:var(--muted);display:block}.tag{display:inline-block;margin-top:6px;padding:5px 8px;border-radius:999px;background:var(--green-2);color:var(--green);font-size:9px;font-weight:900}.tag.blue{background:var(--blue-2);color:var(--blue)}.tag.orange{background:var(--orange-2);color:var(--orange)}
-    .filters{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.filter{border:1px solid var(--line);background:var(--surface);padding:9px 11px;border-radius:12px;font-size:11px;font-weight:850;white-space:nowrap}.filter.active{background:#17201c;color:#fff;border-color:#17201c}
-    .agenda-day{display:flex;gap:12px;overflow:auto;padding-bottom:8px;scrollbar-width:none}.day{min-width:62px;text-align:center;border:1px solid var(--line);background:var(--surface);padding:11px 8px;border-radius:16px}.day strong{font-size:18px;display:block}.day span{font-size:10px;color:var(--muted);text-transform:uppercase}.day.active{background:var(--green);color:white;border-color:var(--green)}.day.active span{color:#d6f4e6}
-    .reminder{display:flex;gap:12px;align-items:flex-start;padding:13px;border-radius:17px;margin-bottom:10px;border:1px solid var(--line);background:var(--surface)}.remicon{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--blue-2)}.reminder h4{margin:0;font-size:14px}.reminder p{margin:4px 0 0;color:var(--muted);font-size:12px}.reminder time{margin-left:auto;color:var(--green);font-size:10px;font-weight:900;white-space:nowrap}
-    .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.toggle-row:last-child{border-bottom:0}.switch{position:relative;width:48px;height:29px}.switch input{display:none}.slider{position:absolute;inset:0;border-radius:999px;background:#cad3cf;transition:.2s}.slider:after{content:"";position:absolute;width:23px;height:23px;border-radius:50%;background:white;top:3px;left:3px;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.15)}.switch input:checked + .slider{background:var(--green)}.switch input:checked + .slider:after{transform:translateX(19px)}
-    .more-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.more-item{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}.more-item b{display:block;margin-top:12px}.more-item small{display:block;color:var(--muted);margin-top:5px;line-height:1.35}
-    nav{position:fixed;z-index:30;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:flex;justify-content:center}
-    .navinner{width:min(100%,700px);display:grid;grid-template-columns:repeat(5,1fr)}.navbtn{border:0;background:transparent;padding:7px 2px;color:#78817d;font-size:10px;font-weight:800;display:grid;gap:4px;place-items:center}.navbtn .ico{font-size:19px}.navbtn.active{color:var(--green)}
-    .fab{position:fixed;right:18px;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));z-index:22;width:54px;height:54px;border:0;border-radius:18px;background:var(--green);color:white;font-size:26px;box-shadow:0 12px 30px rgba(15,143,97,.32)}
-    .sheetback{position:fixed;inset:0;z-index:50;background:rgba(11,17,14,.38);display:none;align-items:flex-end}.sheetback.open{display:flex}.sheet{width:100%;max-height:90dvh;overflow:auto;background:var(--surface);border-radius:26px 26px 0 0;padding:12px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -20px 60px rgba(0,0,0,.18)}.handle{width:44px;height:5px;background:#d8dfdc;border-radius:999px;margin:0 auto 16px}.sheethead{display:flex;justify-content:space-between;align-items:center}.sheethead h3{margin:0}.close{border:0;background:var(--surface-2);width:38px;height:38px;border-radius:13px;font-size:18px}.field{display:grid;gap:6px;margin-top:13px}.field label{font-size:11px;color:var(--muted);font-weight:850}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;background:#fbfcfb;color:var(--text);outline:none}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,143,97,.1)}
-    .client-head{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}.client-head .avatar{width:58px;height:58px}.client-head h3{margin:0}.client-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.info-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}.info-row span{color:var(--muted)}.info-row strong{text-align:right}.notice{padding:13px;border-radius:16px;background:var(--green-2);color:#176748;font-size:12px;line-height:1.4;margin-top:12px}.empty{text-align:center;color:var(--muted);padding:36px 12px}.toast{position:fixed;z-index:80;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(var(--nav-h) + 26px + env(safe-area-inset-bottom));background:#17201c;color:white;padding:11px 15px;border-radius:14px;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    @media(min-width:780px){main{padding-left:24px;padding-right:24px}.grid.two{grid-template-columns:1.15fr .85fr}.topbar{padding-left:24px;padding-right:24px}.hero h2{font-size:34px}.chat p{max-width:420px}.fab{right:calc((100vw - min(100vw,1180px))/2 + 28px)}}
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0e8c5d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Kelo Associates — inbox, CRM, agenda y operación comercial mobile-first.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>Kelo Associates</title>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
     <div class="brandrow">
-      <div class="brand"><div class="mark">K</div><div><h1>Kelo Associates</h1><small>Kelo Inbox · V0.1 piloto</small></div></div>
-      <button class="iconbtn" id="demoReset" aria-label="Reiniciar demo">↻</button>
+      <div class="brand"><div class="mark">K</div><div><h1>Kelo Associates</h1><small id="todayLabel">Centro operativo</small></div></div>
+      <button class="iconbtn" id="openQuick" aria-label="Acciones rápidas">＋</button>
     </div>
-    <div class="channel-switch" id="channelSwitch">
-      <button class="pill active" data-channel="wa1">WhatsApp 1</button>
-      <button class="pill" data-channel="wa2">WhatsApp 2</button>
-      <button class="pill" data-channel="wa3">WhatsApp 3</button>
-      <button class="pill" data-channel="all">Todos</button>
-    </div>
+    <div class="channelbar" id="channelSwitch" aria-label="Selector de WhatsApp"></div>
   </header>
 
   <main>
     <section class="screen active" data-screen="today">
-      <div class="hero"><div><h2>Hoy</h2><p>Lo importante, sin buscarlo.</p></div><div class="datebadge" id="todayLabel">HOY</div></div>
-      <div class="kpis">
-        <div class="kpi"><strong id="kpiUnread">12</strong><span>Chats sin responder</span></div>
-        <div class="kpi"><strong id="kpiAppointments">3</strong><span>Citas de hoy</span></div>
-        <div class="kpi"><strong>2</strong><span>Ventas esta semana</span></div>
+      <div class="screenhead"><div><h2>Hoy</h2><p id="todaySummary">Tu operación en una sola vista.</p></div><button class="iconbtn" id="refreshNow">↻</button></div>
+      <div class="kpis" id="todayKpis"></div>
+      <div class="grid two" style="margin-top:12px">
+        <div class="card"><div class="sectiontitle"><h3>Citas de hoy</h3><button data-go="agenda">Ver agenda</button></div><div id="todayAppointments"></div></div>
+        <div class="card"><div class="sectiontitle"><h3>Bolsa de salida</h3><button id="prepareAll">Preparar todo</button></div><div id="bagList"></div><div class="notice" id="bagSummary" style="margin-top:10px"></div></div>
       </div>
-
-      <div class="section-title"><h3>Citas de hoy</h3><button data-go="agenda">Ver agenda</button></div>
-      <div class="card" id="todayAppointments"></div>
-
-      <div class="section-title"><h3>Bolsa de salida</h3><button id="prepareAll">Preparar todo</button></div>
-      <div class="card">
-        <div class="bag-header"><div><h3>Qué debes llevar</h3><small style="color:var(--muted)">Sumado desde tus citas</small></div><div class="progress" id="bagProgress">0/0 listo</div></div>
-        <div id="bagList"></div>
+      <div class="grid two" style="margin-top:12px">
+        <div class="card"><div class="sectiontitle"><h3>Prioridad ahora</h3><button data-go="reminders">Ver todo</button></div><div id="priorityList"></div></div>
+        <div class="card"><div class="sectiontitle"><h3>Follow-ups vencidos</h3><button data-go="clients">Clientes</button></div><div id="followupList"></div></div>
       </div>
-
-      <div class="section-title"><h3>Atención</h3></div>
-      <div class="reminder"><div class="remicon">💬</div><div><h4>Carlos espera confirmación</h4><p>Daytona negro · cita 5:30 PM</p></div><time>AHORA</time></div>
-      <div class="reminder"><div class="remicon">⏱</div><div><h4>3 conversaciones pasan de 30 min</h4><p>Revisa los chats pendientes antes de salir.</p></div><time>HOY</time></div>
     </section>
 
     <section class="screen" data-screen="chats">
-      <div class="hero"><div><h2>Chats</h2><p id="chatSubtitle">WhatsApp 1</p></div><button class="secondary">⌕ Buscar</button></div>
-      <div class="filters"><button class="filter active">Todos</button><button class="filter">Sin responder</button><button class="filter">Follow-up</button><button class="filter">Cita</button><button class="filter">Hot</button></div>
-      <div class="section-title"><h3>Conversaciones</h3><button id="markRead">Marcar leídas</button></div>
-      <div class="card chatlist" id="chatList"></div>
+      <div class="screenhead"><div><h2>Chats</h2><p>Una bandeja, tres canales, cliente único.</p></div><button class="iconbtn" id="markAllRead">✓</button></div>
+      <div class="toolbar" style="margin-bottom:10px"><button class="pill active" data-chat-filter="all">Todos</button><button class="pill" data-chat-filter="unread">Sin responder</button><button class="pill" data-chat-filter="hot">HOT</button><button class="pill" data-chat-filter="followup">Follow-up</button></div>
+      <div class="card" id="chatList"></div>
+    </section>
+
+    <section class="screen" data-screen="clients">
+      <div class="screenhead"><div><h2>Clientes</h2><p>El cliente pertenece a Kelo Associates, no a una vertical.</p></div><button class="iconbtn" id="newClient">＋</button></div>
+      <div class="field" style="margin-bottom:10px"><input id="clientSearch" type="search" placeholder="Buscar nombre, teléfono, interés…"></div>
+      <div class="card" id="clientList"></div>
     </section>
 
     <section class="screen" data-screen="agenda">
-      <div class="hero"><div><h2>Agenda</h2><p>Citas, entregas y seguimiento.</p></div><button class="secondary" id="newAppointmentTop">+ Cita</button></div>
-      <div class="agenda-day" id="days"></div>
-      <div class="section-title"><h3>Próximas</h3><button>Calendario</button></div>
-      <div class="card" id="agendaList"></div>
+      <div class="screenhead"><div><h2>Agenda</h2><p>Citas, preparación y resultado.</p></div><button class="iconbtn" id="newAppointmentTop">＋</button></div>
+      <div class="tabs" id="agendaTabs"><button class="active" data-agenda="upcoming">Próximas</button><button data-agenda="today">Hoy</button><button data-agenda="past">Pasadas</button></div>
+      <div class="card" style="margin-top:10px" id="agendaList"></div>
     </section>
 
     <section class="screen" data-screen="reminders">
-      <div class="hero"><div><h2>Recordatorios</h2><p>Que nada dependa de tu memoria.</p></div><button class="secondary" id="newReminder">+ Nuevo</button></div>
-      <div id="reminderList"></div>
-      <div class="section-title"><h3>Reglas automáticas</h3></div>
-      <div class="card flat">
-        <div class="toggle-row"><div><b>1 día antes</b><div style="font-size:11px;color:var(--muted);margin-top:3px">Preparar artículos</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="toggle-row"><div><b>2 horas antes</b><div style="font-size:11px;color:var(--muted);margin-top:3px">Cliente + lugar + artículos</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="toggle-row"><div><b>30 minutos antes</b><div style="font-size:11px;color:var(--muted);margin-top:3px">Alerta final de salida</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+      <div class="screenhead"><div><h2>Recordatorios</h2><p>Que una cita nunca dependa de memoria humana.</p></div><button class="iconbtn" id="newTask">＋</button></div>
+      <div class="card"><div class="sectiontitle"><h3>Reglas automáticas</h3><span class="muted">local</span></div><div id="reminderRules"></div></div>
+      <div class="card" style="margin-top:12px"><div class="sectiontitle"><h3>Tareas y alertas</h3><button id="clearCompleted">Limpiar hechas</button></div><div id="reminderList"></div></div>
+    </section>
+
+    <section class="screen" data-screen="metrics">
+      <div class="screenhead"><div><h2>Métricas</h2><p>Mide operación, no cantidad de pantallas.</p></div><button class="iconbtn" id="exportData">⇩</button></div>
+      <div class="kpis" id="metricKpis"></div>
+      <div class="grid two" style="margin-top:12px">
+        <div class="card"><div class="sectiontitle"><h3>Producción por canal</h3></div><div id="channelMetrics"></div></div>
+        <div class="card"><div class="sectiontitle"><h3>Representantes</h3></div><div id="agentMetrics"></div></div>
       </div>
+      <div class="card" style="margin-top:12px"><div class="sectiontitle"><h3>Actividad reciente</h3></div><div id="activityList"></div></div>
     </section>
 
     <section class="screen" data-screen="more">
-      <div class="hero"><div><h2>Más</h2><p>El núcleo que crecerá con Kelo Associates.</p></div></div>
-      <div class="more-grid">
-        <div class="more-item">👥<b>Clientes</b><small>Perfil único e historial comercial.</small></div>
-        <div class="more-item">📈<b>Métricas</b><small>Respuesta, citas, cierres y valor.</small></div>
-        <div class="more-item">🧭<b>Asignaciones</b><small>Responsable por lead o tarea.</small></div>
-        <div class="more-item">⌚<b>Relojes</b><small>Vertical piloto y preparación.</small></div>
-        <div class="more-item">🏠<b>Home Improvement</b><small>Bathroom, Kitchen y Roofing.</small></div>
-        <div class="more-item">🚗<b>Autos</b><small>Vehículos, citas y entregas.</small></div>
+      <div class="screenhead"><div><h2>Más</h2><p>Control, datos e infraestructura.</p></div></div>
+      <div class="grid two">
+        <div class="card stack">
+          <h3>Vertical activa</h3>
+          <div class="field"><select id="verticalSelect"><option value="watches">Relojes</option><option value="bathroom">Bathroom Remodeling</option><option value="kitchen">Kitchen Remodeling</option><option value="roofing">Roofing</option><option value="autos">Autos</option></select></div>
+          <div class="notice">El núcleo de cliente, citas, tareas, asignaciones, oportunidades y ventas es universal. Los campos específicos cambian por vertical.</div>
+        </div>
+        <div class="card stack">
+          <h3>Integraciones</h3>
+          <div id="integrationStatus"></div>
+          <div class="notice warning">Los canales reales permanecen desactivados hasta conectar backend y credenciales. Ningún secreto se guarda en este navegador.</div>
+        </div>
+        <div class="card stack">
+          <h3>Datos</h3>
+          <button class="secondary wide" id="importData">Importar respaldo JSON</button>
+          <button class="secondary wide" id="resetDemo">Restaurar demo</button>
+          <input type="file" id="importFile" accept="application/json" hidden>
+        </div>
+        <div class="card stack">
+          <h3>Estado del producto</h3>
+          <div class="metricrow"><span>Fase 0 — Prototipo funcional</span><strong>ACTIVA</strong></div>
+          <div class="metricrow"><span>Persistencia local</span><strong>LISTA</strong></div>
+          <div class="metricrow"><span>WhatsApp oficial</span><strong>PENDIENTE BACKEND</strong></div>
+          <div class="metricrow"><span>PWA</span><strong>LISTA</strong></div>
+        </div>
       </div>
-      <div class="notice"><b>Arquitectura:</b> Cliente, conversación, cita, tarea y venta son núcleo. Modelo de reloj, presupuesto de remodelación o vehículo son datos de cada vertical.</div>
     </section>
   </main>
 
   <button class="fab" id="fab" aria-label="Nueva cita">＋</button>
-
-  <nav>
-    <div class="navinner">
-      <button class="navbtn active" data-target="today"><span class="ico">☀</span>Hoy</button>
-      <button class="navbtn" data-target="chats"><span class="ico">◌</span>Chats</button>
-      <button class="navbtn" data-target="agenda"><span class="ico">□</span>Agenda</button>
-      <button class="navbtn" data-target="reminders"><span class="ico">♢</span>Recordar</button>
-      <button class="navbtn" data-target="more"><span class="ico">•••</span>Más</button>
-    </div>
+  <nav class="bottomnav">
+    <button class="navbtn active" data-target="today"><span>⌂</span><span>Hoy</span></button>
+    <button class="navbtn" data-target="chats"><span>💬</span><span>Chats</span></button>
+    <button class="navbtn" data-target="clients"><span>👥</span><span>Clientes</span></button>
+    <button class="navbtn" data-target="agenda"><span>▣</span><span>Agenda</span></button>
+    <button class="navbtn" data-target="reminders"><span>🔔</span><span>Alertas</span></button>
+    <button class="navbtn" data-target="metrics"><span>▥</span><span>Métricas</span></button>
   </nav>
 </div>
 
-<div class="sheetback" id="clientSheet">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheethead"><h3>Cliente</h3><button class="close" data-close="clientSheet">×</button></div>
-    <div id="clientContent"></div>
-  </div>
-</div>
+<!-- Chat -->
+<div class="sheetback" id="chatSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><div><h3 id="chatTitle">Chat</h3><p class="muted" id="chatSubtitle"></p></div><button class="iconbtn" data-close="chatSheet">×</button></div><div class="actions" id="chatActions"></div><div class="chatthread" id="chatThread"></div><form class="composer" id="messageForm"><input name="message" autocomplete="off" placeholder="Escribe un mensaje simulado…"><button class="primary">Enviar</button></form></div></div>
 
-<div class="sheetback" id="appointmentSheet">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheethead"><h3>Nueva cita</h3><button class="close" data-close="appointmentSheet">×</button></div>
-    <form id="appointmentForm">
-      <div class="field"><label>CLIENTE</label><input name="client" value="Carlos M." required></div>
-      <div class="field"><label>VERTICAL</label><select name="vertical"><option>Relojes</option><option>Bathroom</option><option>Kitchen</option><option>Roofing</option><option>Autos</option></select></div>
-      <div class="field"><label>FECHA</label><input type="date" name="date" required></div>
-      <div class="field"><label>HORA</label><input type="time" name="time" value="17:30" required></div>
-      <div class="field"><label>LUGAR</label><input name="location" value="Grand Concourse, Bronx"></div>
-      <div class="field"><label>QUÉ DEBO LLEVAR</label><input name="items" value="Daytona negro, Submariner"></div>
-      <div class="field"><label>NOTAS</label><textarea name="notes" placeholder="Precio, caja, instrucciones..."></textarea></div>
-      <button class="primary" type="submit">Guardar cita</button>
-    </form>
-  </div>
-</div>
+<!-- Cliente -->
+<div class="sheetback" id="clientSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Cliente</h3><button class="iconbtn" data-close="clientSheet">×</button></div><div id="clientContent"></div></div></div>
+
+<!-- Nueva cita -->
+<div class="sheetback" id="appointmentSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva cita</h3><button class="iconbtn" data-close="appointmentSheet">×</button></div><form class="formgrid" id="appointmentForm">
+  <div class="field"><label>Cliente</label><select name="clientId" id="appointmentClient" required></select></div>
+  <div class="split"><div class="field"><label>Fecha</label><input type="date" name="date" required></div><div class="field"><label>Hora</label><input type="time" name="time" required></div></div>
+  <div class="field"><label>Lugar</label><input name="location" placeholder="Punto de encuentro" required></div>
+  <div class="field"><label>Qué debo llevar</label><input name="items" placeholder="Daytona negro, Submariner, caja"></div>
+  <div class="split"><div class="field"><label>Valor estimado</label><input name="value" type="number" min="0" step="1" placeholder="200"></div><div class="field"><label>Responsable</label><select name="agent" id="appointmentAgent"></select></div></div>
+  <div class="field"><label>Notas</label><textarea name="notes" placeholder="Detalles que no se pueden olvidar"></textarea></div>
+  <button class="primary wide" type="submit">Guardar cita + crear recordatorios</button>
+</form></div></div>
+
+<!-- Resultado -->
+<div class="sheetback" id="resultSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Resultado de la cita</h3><button class="iconbtn" data-close="resultSheet">×</button></div><div id="resultContext" class="notice" style="margin-bottom:10px"></div><div class="resultgrid"><button class="primary" data-result="sold">✓ Vendido</button><button class="secondary" data-result="followup">↻ Follow-up</button><button class="danger" data-result="cancelled">× Cancelado</button><button class="ghost" data-result="no_show">No-show</button></div></div></div>
+
+<!-- Tarea -->
+<div class="sheetback" id="taskSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva tarea</h3><button class="iconbtn" data-close="taskSheet">×</button></div><form class="formgrid" id="taskForm"><div class="field"><label>Título</label><input name="title" required placeholder="Confirmar cliente"></div><div class="field"><label>Cliente</label><select name="clientId" id="taskClient"></select></div><div class="split"><div class="field"><label>Fecha</label><input name="date" type="date" required></div><div class="field"><label>Hora</label><input name="time" type="time" required></div></div><div class="field"><label>Prioridad</label><select name="priority"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></div><button class="primary wide">Guardar tarea</button></form></div></div>
+
+<!-- Cliente nuevo -->
+<div class="sheetback" id="newClientSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nuevo cliente</h3><button class="iconbtn" data-close="newClientSheet">×</button></div><form class="formgrid" id="clientForm"><div class="field"><label>Nombre</label><input name="name" required></div><div class="field"><label>Teléfono</label><input name="phone" required></div><div class="field"><label>Email</label><input name="email" type="email"></div><div class="split"><div class="field"><label>Canal</label><select name="channel"><option value="wa1">WhatsApp 1</option><option value="wa2">WhatsApp 2</option><option value="wa3">WhatsApp 3</option></select></div><div class="field"><label>Fuente</label><input name="source" placeholder="Marketplace"></div></div><div class="field"><label>Interés inicial</label><input name="interest" placeholder="Daytona negro"></div><button class="primary wide">Crear cliente</button></form></div></div>
 
 <div class="toast" id="toast"></div>
-
-<script>
-(() => {
-  const $ = (s, root=document) => root.querySelector(s);
-  const $$ = (s, root=document) => [...root.querySelectorAll(s)];
-  const storageKey = 'kelo-associates-v01';
-
-  const baseState = {
-    channel:'wa1',
-    unread:12,
-    chats:[
-      {id:1,channel:'wa1',name:'Carlos M.',initials:'CM',preview:'Quiere Daytona negra',time:'9:24 AM',tag:'Reloj',tone:'',phone:'+1 347 555 0198',model:'Daytona negro',price:'$200 sin caja / $285 con caja',status:'HOT',location:'Grand Concourse, Bronx',notes:'Cliente serio. Confirmar antes de salir.'},
-      {id:2,channel:'wa1',name:'Ana Rodríguez',initials:'AR',preview:'¿Sigues teniendo el Datejust?',time:'8:50 AM',tag:'Follow-up',tone:'blue',phone:'+1 917 555 0137',model:'Datejust',price:'Pendiente',status:'WARM',location:'Bronx',notes:'Pidió fotos adicionales.'},
-      {id:3,channel:'wa2',name:'Luis Herrera',initials:'LH',preview:'Perfecto, nos vemos mañana.',time:'Ayer',tag:'Entrega hoy',tone:'orange',phone:'+1 646 555 0172',model:'Submariner negro',price:'$200',status:'CITA',location:'Bronx',notes:'Llevar también una caja.'},
-      {id:4,channel:'wa2',name:'María González',initials:'MG',preview:'Gracias por la información',time:'Ayer',tag:'Reloj',tone:'',phone:'+1 929 555 0191',model:'GMT',price:'$200',status:'WARM',location:'NYC',notes:'Dar seguimiento.'},
-      {id:5,channel:'wa3',name:'Javier Torres',initials:'JT',preview:'¿Me puedes enviar más fotos?',time:'Ayer',tag:'Follow-up',tone:'blue',phone:'+1 718 555 0161',model:'Daytona',price:'Pendiente',status:'NEW',location:'NJ',notes:'Enviar video del reloj.'},
-      {id:6,channel:'wa3',name:'Andrés Cabral',initials:'AC',preview:'Listo, confirmado 👍',time:'Dom',tag:'Cita',tone:'blue',phone:'+1 201 555 0112',model:'Submariner',price:'$285 con caja',status:'CITA',location:'New Jersey',notes:'Cita confirmada.'}
-    ],
-    appointments:[
-      {id:101,client:'Luis Herrera',time:'10:00 AM',location:'Bronx',items:['Daytona negro'],status:'ready',date:'today'},
-      {id:102,client:'Miguel R.',time:'2:30 PM',location:'Yonkers',items:['Submariner','Caja'],status:'pending',date:'today'},
-      {id:103,client:'Carlos M.',time:'5:30 PM',location:'Grand Concourse, Bronx',items:['Daytona negro','Submariner'],status:'pending',date:'today'}
-    ],
-    bag:[
-      {id:'b1',name:'Daytona negro',qty:2,ready:false},
-      {id:'b2',name:'Submariner',qty:2,ready:false},
-      {id:'b3',name:'Caja',qty:1,ready:false}
-    ]
-  };
-
-  let state = load();
-
-  function load(){
-    try { return {...structuredClone(baseState), ...JSON.parse(localStorage.getItem(storageKey) || '{}')}; }
-    catch { return structuredClone(baseState); }
-  }
-  function save(){ localStorage.setItem(storageKey, JSON.stringify(state)); }
-  function esc(v=''){ return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-  function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),1900); }
-
-  function setDateLabels(){
-    const now=new Date();
-    $('#todayLabel').textContent=now.toLocaleDateString('es-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
-    const dateInput=$('#appointmentForm input[name="date"]');
-    if(!dateInput.value) dateInput.value=now.toISOString().slice(0,10);
-    const days=$('#days'); days.innerHTML='';
-    for(let i=0;i<7;i++){
-      const d=new Date(now); d.setDate(now.getDate()+i);
-      days.insertAdjacentHTML('beforeend',`<button class="day ${i===0?'active':''}"><span>${d.toLocaleDateString('es-US',{weekday:'short'})}</span><strong>${d.getDate()}</strong></button>`);
-    }
-  }
-
-  function renderChannels(){
-    $$('.pill').forEach(b=>b.classList.toggle('active',b.dataset.channel===state.channel));
-    $('#chatSubtitle').textContent=state.channel==='all'?'Todos los canales':`WhatsApp ${state.channel.slice(-1)}`;
-  }
-
-  function renderChats(){
-    const list=$('#chatList');
-    const rows=state.chats.filter(c=>state.channel==='all'||c.channel===state.channel);
-    list.innerHTML=rows.length?rows.map(c=>`<article class="chat" data-chat="${c.id}"><div class="avatar">${esc(c.initials)}</div><div><h4>${esc(c.name)}</h4><p>${esc(c.preview)}</p></div><div class="chatmeta"><time>${esc(c.time)}</time><span class="tag ${esc(c.tone)}">${esc(c.tag)}</span></div></article>`).join(''):`<div class="empty">No hay chats en este canal.</div>`;
-    $$('[data-chat]').forEach(el=>el.addEventListener('click',()=>openClient(Number(el.dataset.chat))));
-  }
-
-  function renderAppointments(){
-    const rows=state.appointments.filter(a=>a.date==='today');
-    const html=rows.map(a=>`<div class="appointment"><div class="time">${esc(a.time)}</div><div><h4>${esc(a.client)}</h4><p>${esc(a.items.join(' · '))}<br>${esc(a.location)}</p></div><span class="status ${a.status==='ready'?'ready':'pending'}">${a.status==='ready'?'PREPARADO':'PREPARAR'}</span></div>`).join('');
-    $('#todayAppointments').innerHTML=html||'<div class="empty">No hay citas hoy.</div>';
-    $('#agendaList').innerHTML=html||'<div class="empty">No hay citas.</div>';
-    $('#kpiAppointments').textContent=rows.length;
-  }
-
-  function renderBag(){
-    $('#bagList').innerHTML=state.bag.map(i=>`<div class="checkrow"><input type="checkbox" data-bag="${esc(i.id)}" ${i.ready?'checked':''}><label>${i.qty} × ${esc(i.name)}</label><small>${i.ready?'Listo':'Pendiente'}</small></div>`).join('');
-    const ready=state.bag.filter(i=>i.ready).length;
-    $('#bagProgress').textContent=`${ready}/${state.bag.length} listo`;
-    $$('[data-bag]').forEach(el=>el.addEventListener('change',()=>{
-      const item=state.bag.find(i=>i.id===el.dataset.bag); item.ready=el.checked; save(); renderBag(); toast(el.checked?'Marcado como preparado':'Marcado como pendiente');
-    }));
-  }
-
-  function renderReminders(){
-    const pending=state.bag.filter(i=>!i.ready);
-    const rows=[
-      {icon:'⌚',title:'Preparar bolsa de salida',desc:pending.length?`${pending.length} artículos pendientes`:'Todo preparado',time:'HOY'},
-      {icon:'💬',title:'Confirmar cita con Carlos',desc:'Daytona negro · 5:30 PM',time:'2:00 PM'},
-      {icon:'📍',title:'Salida para cita',desc:'Grand Concourse, Bronx',time:'5:00 PM'}
-    ];
-    $('#reminderList').innerHTML=rows.map(r=>`<div class="reminder"><div class="remicon">${r.icon}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.desc)}</p></div><time>${esc(r.time)}</time></div>`).join('');
-  }
-
-  function openClient(id){
-    const c=state.chats.find(x=>x.id===id); if(!c)return;
-    $('#clientContent').innerHTML=`
-      <div class="client-head"><div class="avatar">${esc(c.initials)}</div><div><h3>${esc(c.name)}</h3><p>${esc(c.phone)} · ${esc(c.channel.toUpperCase())}</p></div></div>
-      <div class="info-row"><span>Estado</span><strong>${esc(c.status)}</strong></div>
-      <div class="info-row"><span>Modelo solicitado</span><strong>${esc(c.model)}</strong></div>
-      <div class="info-row"><span>Precio</span><strong>${esc(c.price)}</strong></div>
-      <div class="info-row"><span>Lugar</span><strong>${esc(c.location)}</strong></div>
-      <div class="info-row"><span>Notas</span><strong>${esc(c.notes)}</strong></div>
-      <div class="notice">Este perfil pertenece al cliente, no al chat. En el futuro aquí convivirán relojes, remodelación, autos y cualquier otra relación con Kelo Associates.</div>
-      <button class="primary" id="scheduleForClient">Agendar cita</button>`;
-    $('#clientSheet').classList.add('open');
-    $('#scheduleForClient').onclick=()=>{ $('#clientSheet').classList.remove('open'); $('#appointmentForm input[name="client"]').value=c.name; $('#appointmentSheet').classList.add('open'); };
-  }
-
-  function navigate(target){
-    $$('.screen').forEach(s=>s.classList.toggle('active',s.dataset.screen===target));
-    $$('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.target===target));
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-
-  function renderAll(){
-    renderChannels(); renderChats(); renderAppointments(); renderBag(); renderReminders();
-    $('#kpiUnread').textContent=state.unread;
-  }
-
-  $('#channelSwitch').addEventListener('click',e=>{
-    const b=e.target.closest('[data-channel]'); if(!b)return;
-    state.channel=b.dataset.channel; save(); renderChannels(); renderChats();
-  });
-  $$('.navbtn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.target)));
-  $$('[data-go]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.go)));
-  $$('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).classList.remove('open')));
-  $$('.sheetback').forEach(back=>back.addEventListener('click',e=>{ if(e.target===back) back.classList.remove('open'); }));
-  $('#fab').onclick=()=>$('#appointmentSheet').classList.add('open');
-  $('#newAppointmentTop').onclick=()=>$('#appointmentSheet').classList.add('open');
-  $('#newReminder').onclick=()=>toast('V0.1: recordatorio manual listo para siguiente módulo');
-  $('#markRead').onclick=()=>{state.unread=0;save();renderAll();toast('Chats marcados como revisados');};
-  $('#prepareAll').onclick=()=>{state.bag.forEach(i=>i.ready=true);save();renderBag();renderReminders();toast('Bolsa marcada como preparada');};
-  $('#demoReset').onclick=()=>{localStorage.removeItem(storageKey);state=structuredClone(baseState);renderAll();setDateLabels();toast('Demo reiniciada');};
-
-  $('#appointmentForm').addEventListener('submit',e=>{
-    e.preventDefault();
-    const f=new FormData(e.currentTarget);
-    const items=String(f.get('items')||'').split(',').map(x=>x.trim()).filter(Boolean);
-    state.appointments.push({id:Date.now(),client:f.get('client'),time:new Date(`1970-01-01T${f.get('time')}`).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),location:f.get('location')||'Sin ubicación',items:items.length?items:['Por definir'],status:'pending',date:'today'});
-    items.forEach((name,idx)=>state.bag.push({id:`b${Date.now()}${idx}`,name,qty:1,ready:false}));
-    save(); renderAll(); $('#appointmentSheet').classList.remove('open'); navigate('today'); toast('Cita guardada y añadida a Hoy');
-  });
-
-  setDateLabels(); renderAll();
-})();
-</script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
