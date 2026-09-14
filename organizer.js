@@ -1,3 +1,4 @@
+import './updater.js';
 const ORG_KEY='kelo-organizer-v1';
 const CRM_KEY='kelo-associates-v2';
 const ICONS={call:'☎',visit:'⌖',task:'✓',followup:'↻'};

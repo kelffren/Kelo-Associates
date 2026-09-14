@@ -1,10 +1,10 @@
 {
   "name":"kelo-associates",
   "private":true,
-  "version":"0.2.0",
+  "version":"0.2.1",
   "type":"module",
   "scripts":{
-    "check":"node --check app.js && node --check data.js && node --check integrations.js && node --check auth.js && node --check organizer.js && node --check service-worker.js",
+    "check":"node --check app.js && node --check data.js && node --check integrations.js && node --check auth.js && node --check organizer.js && node --check updater.js && node --check service-worker.js",
     "test":"node tests/state-smoke.js && node tests/dom-contract.js"
   }
 }

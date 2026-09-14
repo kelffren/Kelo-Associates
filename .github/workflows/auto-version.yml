@@ -1,0 +1,45 @@
+name: Auto Version PWA
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'service-worker.js'
+
+permissions:
+  contents: write
+
+jobs:
+  stamp-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Stamp current main SHA into service worker
+        env:
+          BUILD_SHA: ${{ github.sha }}
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const path='service-worker.js';
+          const sha=process.env.BUILD_SHA;
+          let src=fs.readFileSync(path,'utf8');
+          if(!/const BUILD='[^']*';/.test(src)) throw new Error('BUILD marker missing in service-worker.js');
+          src=src.replace(/const BUILD='[^']*';/,`const BUILD='${sha}';`);
+          fs.writeFileSync(path,src);
+          NODE
+      - name: Publish stamped build
+        run: |
+          if git diff --quiet -- service-worker.js; then
+            echo "Build marker already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add service-worker.js
+          git commit -m "chore: stamp PWA build ${GITHUB_SHA::7}"
+          git push origin HEAD:main
