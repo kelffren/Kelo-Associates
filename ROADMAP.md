@@ -576,3 +576,65 @@ Además se añadieron mejoras de accesibilidad/interacción: roles de tab, `aria
 ### Regla de madurez
 
 Una pantalla madura debe poder responder en menos de unos segundos: qué está pasando, qué necesita atención y cuál es la siguiente acción. Si requiere interpretar demasiadas cajas, colores o textos, debe simplificarse antes de añadir funciones nuevas.
+
+---
+
+## 20. Daily Profit Ledger — ventas y ganancia real del día
+
+Problema real: conocer cuánto se vendió no basta. El dueño necesita saber cuánto quedó realmente después de pagar producto y gastos directos de la operación.
+
+Dentro de `MONEY`, cada venta puede registrar:
+
+- negocio: relojes, Zara o moissanita;
+- cliente;
+- producto;
+- precio final de venta;
+- costo de compra del producto;
+- costo de caja/empaque;
+- gasolina atribuida a la operación;
+- tolls/peajes;
+- otros gastos directos.
+
+Kelo calcula automáticamente:
+
+`TOTAL_COST = PRODUCT_COST + BOX_COST + GAS + TOLLS + OTHER`
+
+`NET_PROFIT = SALE_PRICE - TOTAL_COST`
+
+`MARGIN = NET_PROFIT / SALE_PRICE`
+
+La pantalla `MONEY` debe mostrar para el día:
+
+- número de ventas;
+- revenue vendido;
+- costos reales;
+- ganancia neta;
+- desglose de cada venta y su margen.
+
+Ejemplo:
+
+```text
+Daytona Black
+Venta              $200
+Reloj                $40
+Caja                 $15
+Gas                  $12
+Tolls                  $7
+------------------------
+Costo real            $74
+Ganancia neta        $126
+Margen               63.0%
+```
+
+### Principio contable operativo
+
+El objetivo inicial no es sustituir contabilidad fiscal ni bookkeeping profesional. Es responder rápidamente a la pregunta operativa: **¿cuánto dinero dejó realmente esta venta?**
+
+Los costos deben permanecer separados para permitir después descubrir cuánto se está perdiendo en delivery, gasolina, cajas, descuentos u otros gastos.
+
+### Implementación actual
+
+- `daily-profit-ledger.js` mantiene el ledger local del prototipo;
+- `daily-profit-ledger.css` aporta la UI especializada;
+- `ui-maturity.js` carga el módulo dentro de Operator sin acoplarlo a la lógica principal;
+- persistencia provisional mediante `localStorage` hasta que el backend real se convierta en fuente de verdad.
