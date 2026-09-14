@@ -1,0 +1,11 @@
+{
+  "name":"Kelo Associates",
+  "short_name":"Kelo",
+  "description":"Inbox, CRM, agenda y operación comercial de Kelo Associates.",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#f4f7f5",
+  "theme_color":"#0e8c5d",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
