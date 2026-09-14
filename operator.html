@@ -23,10 +23,13 @@
     <button data-business="moissanite">💎 Moissanita</button>
   </div>
 
-  <section class="quick-command">
-    <input id="quickTaskInput" placeholder="Ej: Comprar Daytona negro para Juan el viernes a las 3 PM">
-    <button class="primary" id="addQuickTask">+ TASK</button>
+  <section class="quick-command task-launcher">
+    <button class="primary task-main-btn" id="openTaskBuilder">＋ TASK RÁPIDA</button>
     <button class="secondary" id="forgetScan">WHAT AM I FORGETTING?</button>
+    <div class="legacy-quick" aria-hidden="true">
+      <input id="quickTaskInput" tabindex="-1">
+      <button id="addQuickTask" tabindex="-1">Add</button>
+    </div>
   </section>
 
   <nav class="operator-tabs">
@@ -56,8 +59,61 @@
   </main>
 </div>
 
+<div class="task-sheet-back" id="taskBuilder" hidden>
+  <section class="task-sheet" role="dialog" aria-modal="true" aria-labelledby="taskBuilderTitle">
+    <div class="task-sheet-handle"></div>
+    <div class="task-sheet-head">
+      <div><small>NUEVA TAREA</small><h2 id="taskBuilderTitle">¿Qué tienes que hacer?</h2></div>
+      <button class="task-close" id="closeTaskBuilder" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="task-section">
+      <label>Acción</label>
+      <div class="task-actions" id="taskActionChoices">
+        <button data-task-action="Comprar">🛒 Comprar</button>
+        <button data-task-action="Vender">💵 Vender</button>
+        <button data-task-action="Reparar">🛠 Reparar</button>
+        <button data-task-action="Cambiar">↔ Cambiar</button>
+        <button data-task-action="Llamar">📞 Llamar</button>
+        <button data-task-action="Confirmar">✓ Confirmar</button>
+        <button data-task-action="Cobrar">💰 Cobrar</button>
+        <button data-task-action="Entregar">🚗 Entregar</button>
+        <button data-task-action="Conseguir">🔎 Conseguir</button>
+        <button data-task-action="Follow-up">↻ Follow-up</button>
+      </div>
+    </div>
+
+    <div class="task-form-grid">
+      <label>Negocio<select id="taskBusiness"><option value="watches">⌚ Relojes</option><option value="moissanite">💎 Moissanita</option><option value="zara">👗 Zara</option><option value="general">General</option></select></label>
+      <label>Cliente<select id="taskCustomer"><option value="">Sin cliente</option></select></label>
+      <label>Producto<select id="taskProduct"><option value="">Seleccionar producto</option></select></label>
+      <label id="taskCustomProductWrap" hidden>Producto / detalle<input id="taskCustomProduct" placeholder="Ej. Daytona negro"></label>
+    </div>
+
+    <div class="task-section compact">
+      <label>Cuándo</label>
+      <div class="task-presets" id="taskWhenPresets">
+        <button data-when="today">Hoy</button><button data-when="tomorrow">Mañana</button><button data-when="2days">En 2 días</button><button data-when="custom">Elegir fecha</button>
+      </div>
+      <div class="task-date-row">
+        <input type="date" id="taskDate"><input type="time" id="taskTime" value="11:00">
+      </div>
+    </div>
+
+    <div class="task-form-grid two">
+      <label>Alerta<select id="taskAlert"><option value="15">15 min antes</option><option value="30">30 min antes</option><option value="60">1 hora antes</option><option value="180">3 horas antes</option><option value="1440">1 día antes</option></select></label>
+      <label>Prioridad<select id="taskPriority"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></label>
+    </div>
+
+    <label class="task-note">Nota opcional<textarea id="taskNote" rows="2" placeholder="Solo si hace falta aclarar algo"></textarea></label>
+    <div class="task-preview" id="taskPreview">Selecciona una acción para crear la tarea.</div>
+    <button class="primary task-save" id="saveStructuredTask">CREAR TAREA + ALERTA</button>
+  </section>
+</div>
+
 <div class="operator-toast" id="operatorToast" role="status"></div>
 <div class="operator-alert" id="hotAlert" hidden><div><small>🔥 HOT OPPORTUNITY</small><strong id="hotAlertTitle"></strong><p id="hotAlertText"></p><div class="inline-actions"><button class="primary" id="hotAlertOpen">OPEN</button><button class="secondary" id="hotAlertClose">CLOSE</button></div></div></div>
 <script type="module" src="operator.js"></script>
+<script type="module" src="task-builder.js"></script>
 </body>
 </html>
