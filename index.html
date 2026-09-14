@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0e8c5d">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
   <meta name="description" content="Kelo Associates — inbox, CRM, agenda y operación comercial mobile-first.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
@@ -15,52 +18,57 @@
 <div class="app">
   <header class="topbar">
     <div class="brandrow">
-      <div class="brand"><div class="mark">K</div><div><h1>Kelo Associates</h1><small id="todayLabel">Centro operativo</small></div></div>
-      <button class="iconbtn" id="openQuick" aria-label="Acciones rápidas">＋</button>
+      <div class="brand"><div class="mark" aria-hidden="true">K</div><div><h1>Kelo Associates</h1><small id="todayLabel">Centro operativo</small></div></div>
+      <button class="iconbtn" id="openQuick" aria-label="Abrir más opciones">•••</button>
     </div>
     <div class="channelbar" id="channelSwitch" aria-label="Selector de WhatsApp"></div>
   </header>
 
   <main>
     <section class="screen active" data-screen="today">
-      <div class="screenhead"><div><h2>Hoy</h2><p id="todaySummary">Tu operación en una sola vista.</p></div><button class="iconbtn" id="refreshNow">↻</button></div>
+      <div class="screenhead"><div><h2>Hoy</h2><p id="todaySummary">Tu operación en una sola vista.</p></div><button class="iconbtn" id="refreshNow" aria-label="Actualizar">↻</button></div>
+      <div class="hero">
+        <span class="hero-eyebrow">Centro operativo</span>
+        <h3>Lo importante primero. Lo demás puede esperar.</h3>
+        <p>Citas, clientes pendientes, artículos que debes llevar y próximas acciones reunidos para que no dependas de memoria.</p>
+      </div>
       <div class="kpis" id="todayKpis"></div>
       <div class="grid two" style="margin-top:12px">
         <div class="card"><div class="sectiontitle"><h3>Citas de hoy</h3><button data-go="agenda">Ver agenda</button></div><div id="todayAppointments"></div></div>
         <div class="card"><div class="sectiontitle"><h3>Bolsa de salida</h3><button id="prepareAll">Preparar todo</button></div><div id="bagList"></div><div class="notice" id="bagSummary" style="margin-top:10px"></div></div>
       </div>
       <div class="grid two" style="margin-top:12px">
-        <div class="card"><div class="sectiontitle"><h3>Prioridad ahora</h3><button data-go="reminders">Ver todo</button></div><div id="priorityList"></div></div>
+        <div class="card"><div class="sectiontitle"><h3>Prioridad ahora</h3><button data-go="reminders">Ver alertas</button></div><div id="priorityList"></div></div>
         <div class="card"><div class="sectiontitle"><h3>Follow-ups vencidos</h3><button data-go="clients">Clientes</button></div><div id="followupList"></div></div>
       </div>
     </section>
 
     <section class="screen" data-screen="chats">
-      <div class="screenhead"><div><h2>Chats</h2><p>Una bandeja, tres canales, cliente único.</p></div><button class="iconbtn" id="markAllRead">✓</button></div>
-      <div class="toolbar" style="margin-bottom:10px"><button class="pill active" data-chat-filter="all">Todos</button><button class="pill" data-chat-filter="unread">Sin responder</button><button class="pill" data-chat-filter="hot">HOT</button><button class="pill" data-chat-filter="followup">Follow-up</button></div>
+      <div class="screenhead"><div><h2>Chats</h2><p>Una bandeja limpia para tres canales y un cliente único.</p></div><button class="iconbtn" id="markAllRead" aria-label="Marcar todo revisado">✓</button></div>
+      <div class="toolbar" style="margin-bottom:10px" aria-label="Filtros de chat"><button class="pill active" data-chat-filter="all">Todos</button><button class="pill" data-chat-filter="unread">Sin responder</button><button class="pill" data-chat-filter="hot">HOT</button><button class="pill" data-chat-filter="followup">Follow-up</button></div>
       <div class="card" id="chatList"></div>
     </section>
 
     <section class="screen" data-screen="clients">
-      <div class="screenhead"><div><h2>Clientes</h2><p>El cliente pertenece a Kelo Associates, no a una vertical.</p></div><button class="iconbtn" id="newClient">＋</button></div>
-      <div class="field" style="margin-bottom:10px"><input id="clientSearch" type="search" placeholder="Buscar nombre, teléfono, interés…"></div>
+      <div class="screenhead"><div><h2>Clientes</h2><p>Una relación continua, aunque mañana compre otro servicio.</p></div><button class="iconbtn" id="newClient" aria-label="Nuevo cliente">＋</button></div>
+      <div class="field" style="margin-bottom:10px"><input id="clientSearch" type="search" inputmode="search" autocomplete="off" placeholder="Buscar nombre, teléfono, interés…" aria-label="Buscar clientes"></div>
       <div class="card" id="clientList"></div>
     </section>
 
     <section class="screen" data-screen="agenda">
-      <div class="screenhead"><div><h2>Agenda</h2><p>Citas, preparación y resultado.</p></div><button class="iconbtn" id="newAppointmentTop">＋</button></div>
-      <div class="tabs" id="agendaTabs"><button class="active" data-agenda="upcoming">Próximas</button><button data-agenda="today">Hoy</button><button data-agenda="past">Pasadas</button></div>
+      <div class="screenhead"><div><h2>Agenda</h2><p>Citas, preparación y resultado sin perder el contexto.</p></div><button class="iconbtn" id="newAppointmentTop" aria-label="Nueva cita">＋</button></div>
+      <div class="tabs" id="agendaTabs" aria-label="Filtro de agenda"><button class="active" data-agenda="upcoming">Próximas</button><button data-agenda="today">Hoy</button><button data-agenda="past">Pasadas</button></div>
       <div class="card" style="margin-top:10px" id="agendaList"></div>
     </section>
 
     <section class="screen" data-screen="reminders">
-      <div class="screenhead"><div><h2>Recordatorios</h2><p>Que una cita nunca dependa de memoria humana.</p></div><button class="iconbtn" id="newTask">＋</button></div>
-      <div class="card"><div class="sectiontitle"><h3>Reglas automáticas</h3><span class="muted">local</span></div><div id="reminderRules"></div></div>
+      <div class="screenhead"><div><h2>Alertas</h2><p>Que una cita nunca dependa de memoria humana.</p></div><button class="iconbtn" id="newTask" aria-label="Nueva tarea">＋</button></div>
+      <div class="card"><div class="sectiontitle"><h3>Reglas automáticas</h3><span class="muted">En este dispositivo</span></div><div id="reminderRules"></div></div>
       <div class="card" style="margin-top:12px"><div class="sectiontitle"><h3>Tareas y alertas</h3><button id="clearCompleted">Limpiar hechas</button></div><div id="reminderList"></div></div>
     </section>
 
     <section class="screen" data-screen="metrics">
-      <div class="screenhead"><div><h2>Métricas</h2><p>Mide operación, no cantidad de pantallas.</p></div><button class="iconbtn" id="exportData">⇩</button></div>
+      <div class="screenhead"><div><h2>Métricas</h2><p>Señales para decidir mejor, no un dashboard lleno por llenar.</p></div><button class="iconbtn" id="exportData" aria-label="Exportar datos">⇩</button></div>
       <div class="kpis" id="metricKpis"></div>
       <div class="grid two" style="margin-top:12px">
         <div class="card"><div class="sectiontitle"><h3>Producción por canal</h3></div><div id="channelMetrics"></div></div>
@@ -70,12 +78,17 @@
     </section>
 
     <section class="screen" data-screen="more">
-      <div class="screenhead"><div><h2>Más</h2><p>Control, datos e infraestructura.</p></div></div>
+      <div class="screenhead"><div><h2>Más</h2><p>Herramientas secundarias, configuración y estado del sistema.</p></div></div>
       <div class="grid two">
+        <div class="card stack">
+          <div class="sectiontitle"><h3>Operación</h3></div>
+          <button class="secondary wide" data-go="reminders">Abrir alertas y tareas</button>
+          <button class="secondary wide" data-go="metrics">Abrir métricas</button>
+        </div>
         <div class="card stack">
           <h3>Vertical activa</h3>
           <div class="field"><select id="verticalSelect"><option value="watches">Relojes</option><option value="bathroom">Bathroom Remodeling</option><option value="kitchen">Kitchen Remodeling</option><option value="roofing">Roofing</option><option value="autos">Autos</option></select></div>
-          <div class="notice">El núcleo de cliente, citas, tareas, asignaciones, oportunidades y ventas es universal. Los campos específicos cambian por vertical.</div>
+          <div class="notice">Cliente, citas, tareas, asignaciones, oportunidades y ventas forman el núcleo. Los campos específicos cambian según la vertical.</div>
         </div>
         <div class="card stack">
           <h3>Integraciones</h3>
@@ -100,43 +113,42 @@
   </main>
 
   <button class="fab" id="fab" aria-label="Nueva cita">＋</button>
-  <nav class="bottomnav">
-    <button class="navbtn active" data-target="today"><span>⌂</span><span>Hoy</span></button>
-    <button class="navbtn" data-target="chats"><span>💬</span><span>Chats</span></button>
-    <button class="navbtn" data-target="clients"><span>👥</span><span>Clientes</span></button>
-    <button class="navbtn" data-target="agenda"><span>▣</span><span>Agenda</span></button>
-    <button class="navbtn" data-target="reminders"><span>🔔</span><span>Alertas</span></button>
-    <button class="navbtn" data-target="metrics"><span>▥</span><span>Métricas</span></button>
+  <nav class="bottomnav" aria-label="Navegación principal">
+    <button class="navbtn active" data-target="today"><span aria-hidden="true">⌂</span><span>Hoy</span></button>
+    <button class="navbtn" data-target="chats"><span aria-hidden="true">◌</span><span>Chats</span></button>
+    <button class="navbtn" data-target="clients"><span aria-hidden="true">◎</span><span>Clientes</span></button>
+    <button class="navbtn" data-target="agenda"><span aria-hidden="true">▣</span><span>Agenda</span></button>
+    <button class="navbtn" data-target="more"><span aria-hidden="true">•••</span><span>Más</span></button>
   </nav>
 </div>
 
 <!-- Chat -->
-<div class="sheetback" id="chatSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><div><h3 id="chatTitle">Chat</h3><p class="muted" id="chatSubtitle"></p></div><button class="iconbtn" data-close="chatSheet">×</button></div><div class="actions" id="chatActions"></div><div class="chatthread" id="chatThread"></div><form class="composer" id="messageForm"><input name="message" autocomplete="off" placeholder="Escribe un mensaje simulado…"><button class="primary">Enviar</button></form></div></div>
+<div class="sheetback" id="chatSheet" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="sheet"><div class="handle"></div><div class="sheethead"><div><h3 id="chatTitle">Chat</h3><p class="muted" id="chatSubtitle"></p></div><button class="iconbtn" data-close="chatSheet" aria-label="Cerrar">×</button></div><div class="actions" id="chatActions"></div><div class="chatthread" id="chatThread"></div><form class="composer" id="messageForm"><input name="message" autocomplete="off" placeholder="Escribe un mensaje simulado…" aria-label="Mensaje"><button class="primary">Enviar</button></form></div></div>
 
 <!-- Cliente -->
-<div class="sheetback" id="clientSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Cliente</h3><button class="iconbtn" data-close="clientSheet">×</button></div><div id="clientContent"></div></div></div>
+<div class="sheetback" id="clientSheet" role="dialog" aria-modal="true" aria-label="Perfil del cliente"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Cliente</h3><button class="iconbtn" data-close="clientSheet" aria-label="Cerrar">×</button></div><div id="clientContent"></div></div></div>
 
 <!-- Nueva cita -->
-<div class="sheetback" id="appointmentSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva cita</h3><button class="iconbtn" data-close="appointmentSheet">×</button></div><form class="formgrid" id="appointmentForm">
+<div class="sheetback" id="appointmentSheet" role="dialog" aria-modal="true" aria-label="Nueva cita"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva cita</h3><button class="iconbtn" data-close="appointmentSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="appointmentForm">
   <div class="field"><label>Cliente</label><select name="clientId" id="appointmentClient" required></select></div>
   <div class="split"><div class="field"><label>Fecha</label><input type="date" name="date" required></div><div class="field"><label>Hora</label><input type="time" name="time" required></div></div>
   <div class="field"><label>Lugar</label><input name="location" placeholder="Punto de encuentro" required></div>
   <div class="field"><label>Qué debo llevar</label><input name="items" placeholder="Daytona negro, Submariner, caja"></div>
-  <div class="split"><div class="field"><label>Valor estimado</label><input name="value" type="number" min="0" step="1" placeholder="200"></div><div class="field"><label>Responsable</label><select name="agent" id="appointmentAgent"></select></div></div>
+  <div class="split"><div class="field"><label>Valor estimado</label><input name="value" type="number" min="0" step="1" inputmode="decimal" placeholder="200"></div><div class="field"><label>Responsable</label><select name="agent" id="appointmentAgent"></select></div></div>
   <div class="field"><label>Notas</label><textarea name="notes" placeholder="Detalles que no se pueden olvidar"></textarea></div>
-  <button class="primary wide" type="submit">Guardar cita + crear recordatorios</button>
+  <button class="primary wide" type="submit">Guardar cita y recordatorios</button>
 </form></div></div>
 
 <!-- Resultado -->
-<div class="sheetback" id="resultSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Resultado de la cita</h3><button class="iconbtn" data-close="resultSheet">×</button></div><div id="resultContext" class="notice" style="margin-bottom:10px"></div><div class="resultgrid"><button class="primary" data-result="sold">✓ Vendido</button><button class="secondary" data-result="followup">↻ Follow-up</button><button class="danger" data-result="cancelled">× Cancelado</button><button class="ghost" data-result="no_show">No-show</button></div></div></div>
+<div class="sheetback" id="resultSheet" role="dialog" aria-modal="true" aria-label="Resultado de la cita"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Resultado de la cita</h3><button class="iconbtn" data-close="resultSheet" aria-label="Cerrar">×</button></div><div id="resultContext" class="notice" style="margin-bottom:10px"></div><div class="resultgrid"><button class="primary" data-result="sold">✓ Vendido</button><button class="secondary" data-result="followup">↻ Follow-up</button><button class="danger" data-result="cancelled">× Cancelado</button><button class="ghost" data-result="no_show">No-show</button></div></div></div>
 
 <!-- Tarea -->
-<div class="sheetback" id="taskSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva tarea</h3><button class="iconbtn" data-close="taskSheet">×</button></div><form class="formgrid" id="taskForm"><div class="field"><label>Título</label><input name="title" required placeholder="Confirmar cliente"></div><div class="field"><label>Cliente</label><select name="clientId" id="taskClient"></select></div><div class="split"><div class="field"><label>Fecha</label><input name="date" type="date" required></div><div class="field"><label>Hora</label><input name="time" type="time" required></div></div><div class="field"><label>Prioridad</label><select name="priority"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></div><button class="primary wide">Guardar tarea</button></form></div></div>
+<div class="sheetback" id="taskSheet" role="dialog" aria-modal="true" aria-label="Nueva tarea"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nueva tarea</h3><button class="iconbtn" data-close="taskSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="taskForm"><div class="field"><label>Título</label><input name="title" required placeholder="Confirmar cliente"></div><div class="field"><label>Cliente</label><select name="clientId" id="taskClient"></select></div><div class="split"><div class="field"><label>Fecha</label><input name="date" type="date" required></div><div class="field"><label>Hora</label><input name="time" type="time" required></div></div><div class="field"><label>Prioridad</label><select name="priority"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></div><button class="primary wide">Guardar tarea</button></form></div></div>
 
 <!-- Cliente nuevo -->
-<div class="sheetback" id="newClientSheet"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nuevo cliente</h3><button class="iconbtn" data-close="newClientSheet">×</button></div><form class="formgrid" id="clientForm"><div class="field"><label>Nombre</label><input name="name" required></div><div class="field"><label>Teléfono</label><input name="phone" required></div><div class="field"><label>Email</label><input name="email" type="email"></div><div class="split"><div class="field"><label>Canal</label><select name="channel"><option value="wa1">WhatsApp 1</option><option value="wa2">WhatsApp 2</option><option value="wa3">WhatsApp 3</option></select></div><div class="field"><label>Fuente</label><input name="source" placeholder="Marketplace"></div></div><div class="field"><label>Interés inicial</label><input name="interest" placeholder="Daytona negro"></div><button class="primary wide">Crear cliente</button></form></div></div>
+<div class="sheetback" id="newClientSheet" role="dialog" aria-modal="true" aria-label="Nuevo cliente"><div class="sheet"><div class="handle"></div><div class="sheethead"><h3>Nuevo cliente</h3><button class="iconbtn" data-close="newClientSheet" aria-label="Cerrar">×</button></div><form class="formgrid" id="clientForm"><div class="field"><label>Nombre</label><input name="name" autocomplete="name" required></div><div class="field"><label>Teléfono</label><input name="phone" autocomplete="tel" inputmode="tel" required></div><div class="field"><label>Email</label><input name="email" type="email" autocomplete="email"></div><div class="split"><div class="field"><label>Canal</label><select name="channel"><option value="wa1">WhatsApp 1</option><option value="wa2">WhatsApp 2</option><option value="wa3">WhatsApp 3</option></select></div><div class="field"><label>Fuente</label><input name="source" placeholder="Marketplace"></div></div><div class="field"><label>Interés inicial</label><input name="interest" placeholder="Daytona negro"></div><button class="primary wide">Crear cliente</button></form></div></div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script type="module" src="app.js"></script>
 </body>
 </html>
