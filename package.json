@@ -1,0 +1,10 @@
+{
+  "name":"kelo-associates",
+  "private":true,
+  "version":"0.1.0",
+  "type":"module",
+  "scripts":{
+    "check":"node --check app.js && node --check data.js && node --check integrations.js && node --check service-worker.js",
+    "test":"node tests/state-smoke.js"
+  }
+}
