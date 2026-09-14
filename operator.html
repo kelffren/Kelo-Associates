@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Kelo Operator OS</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="operator.css">
+</head>
+<body>
+<div class="operator-app">
+  <header class="operator-topbar">
+    <div><small>KELO ASSOCIATES</small><h1>Operator</h1><p>Relojes · Zara · Moissanita</p></div>
+    <a class="back-link" href="./">← App</a>
+  </header>
+
+  <div class="business-switch" id="businessSwitch">
+    <button class="active" data-business="all">Todo</button>
+    <button data-business="watches">⌚ Relojes</button>
+    <button data-business="zara">👗 Zara</button>
+    <button data-business="moissanite">💎 Moissanita</button>
+  </div>
+
+  <section class="quick-command">
+    <input id="quickTaskInput" placeholder="Ej: Comprar Daytona negro para Juan el viernes a las 3 PM">
+    <button class="primary" id="addQuickTask">+ TASK</button>
+    <button class="secondary" id="forgetScan">WHAT AM I FORGETTING?</button>
+  </section>
+
+  <nav class="operator-tabs">
+    <button class="active" data-view="today">HOY</button>
+    <button data-view="chats">CHATS</button>
+    <button data-view="orders">ORDERS</button>
+    <button data-view="products">PRODUCTS</button>
+    <button data-view="money">MONEY</button>
+  </nav>
+
+  <main>
+    <section class="operator-view active" data-view-panel="today">
+      <div class="hero-card">
+        <small>AI WATCHING · HUMAN WHEN IT MATTERS</small>
+        <h2 id="attentionTitle">Lo que necesita tu atención.</h2>
+        <p>La IA puede seguir conversando. Esta pantalla sube ventas, cobros, entregas, compras y follow-ups que requieren acción.</p>
+      </div>
+      <div class="kpi-grid" id="todayKpis"></div>
+      <div class="action-grid" id="todayActions"></div>
+      <div class="forget-panel" id="forgetPanel" hidden><h3>🧠 What am I forgetting?</h3><div id="forgetItems"></div></div>
+    </section>
+
+    <section class="operator-view" data-view-panel="chats"><div class="view-head"><h2>Chats</h2><p>Intención detectada, porcentaje HOT y próximo movimiento.</p></div><div id="chatCards" class="stack"></div></section>
+    <section class="operator-view" data-view-panel="orders"><div class="view-head"><h2>Orders</h2><p>Reserved → Paid → Ready → Delivery → Delivered.</p></div><div id="orderCards" class="stack"></div></section>
+    <section class="operator-view" data-view-panel="products"><div class="view-head"><h2>Products</h2><p>Stock cruzado con demanda real para saber qué comprar.</p></div><div id="productCards" class="stack"></div></section>
+    <section class="operator-view" data-view-panel="money"><div class="view-head"><h2>Money</h2><p>Cobrado, pendiente y ventas que necesitan collection.</p></div><div class="kpi-grid" id="moneyKpis"></div><div id="moneyCards" class="stack"></div></section>
+  </main>
+</div>
+
+<div class="operator-toast" id="operatorToast" role="status"></div>
+<div class="operator-alert" id="hotAlert" hidden><div><small>🔥 HOT OPPORTUNITY</small><strong id="hotAlertTitle"></strong><p id="hotAlertText"></p><div class="inline-actions"><button class="primary" id="hotAlertOpen">OPEN</button><button class="secondary" id="hotAlertClose">CLOSE</button></div></div></div>
+<script type="module" src="operator.js"></script>
+</body>
+</html>
