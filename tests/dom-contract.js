@@ -4,7 +4,9 @@ import fs from 'node:fs';
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const js=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const ids=new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
-const directRefs=[...js.matchAll(/\$\('#([^']+)'\)/g)].map(m=>m[1]);
+// Match only direct $('#id') calls. The negative lookbehind avoids matching the second $
+// inside $$('#selector'), which is a querySelectorAll helper rather than an element id.
+const directRefs=[...js.matchAll(/(?<!\$)\$\('#([^']+)'\)/g)].map(m=>m[1]);
 const missing=[...new Set(directRefs.filter(id=>!ids.has(id)))];
 assert.deepEqual(missing,[],`app.js references missing DOM ids: ${missing.join(', ')}`);
 
