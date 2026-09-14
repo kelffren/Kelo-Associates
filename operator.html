@@ -3,27 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#071018">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Kelo Operator OS</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="operator.css">
+  <link rel="stylesheet" href="operator-mature.css">
 </head>
 <body>
 <div class="operator-app">
   <header class="operator-topbar">
     <div><small>KELO ASSOCIATES</small><h1>Operator</h1><p>Relojes · Zara · Moissanita</p></div>
-    <a class="back-link" href="./">← App</a>
+    <a class="back-link" href="./" aria-label="Volver a la aplicación principal">← App</a>
   </header>
 
-  <div class="business-switch" id="businessSwitch">
+  <div class="business-switch" id="businessSwitch" aria-label="Filtrar por negocio">
     <button class="active" data-business="all">Todo</button>
     <button data-business="watches">⌚ Relojes</button>
     <button data-business="zara">👗 Zara</button>
     <button data-business="moissanite">💎 Moissanita</button>
   </div>
 
-  <section class="quick-command task-launcher">
+  <section class="quick-command task-launcher" aria-label="Acciones rápidas">
     <button class="primary task-main-btn" id="openTaskBuilder">＋ TASK RÁPIDA</button>
     <button class="secondary" id="forgetScan">WHAT AM I FORGETTING?</button>
     <div class="legacy-quick" aria-hidden="true">
@@ -32,7 +35,7 @@
     </div>
   </section>
 
-  <nav class="operator-tabs">
+  <nav class="operator-tabs" aria-label="Navegación principal">
     <button class="active" data-view="today">HOY</button>
     <button data-view="chats">CHATS</button>
     <button data-view="orders">ORDERS</button>
@@ -116,11 +119,12 @@
   </section>
 </div>
 
-<div class="operator-toast" id="operatorToast" role="status"></div>
-<div class="operator-alert" id="hotAlert" hidden><div><small>🔥 HOT OPPORTUNITY</small><strong id="hotAlertTitle"></strong><p id="hotAlertText"></p><div class="inline-actions"><button class="primary" id="hotAlertOpen">OPEN</button><button class="secondary" id="hotAlertClose">CLOSE</button></div></div></div>
+<div class="operator-toast" id="operatorToast" role="status" aria-live="polite"></div>
+<div class="operator-alert" id="hotAlert" hidden role="dialog" aria-modal="false" aria-label="Oportunidad caliente"><div><small>🔥 HOT OPPORTUNITY</small><strong id="hotAlertTitle"></strong><p id="hotAlertText"></p><div class="inline-actions"><button class="primary" id="hotAlertOpen">OPEN</button><button class="secondary" id="hotAlertClose">CLOSE</button></div></div></div>
 <script type="module" src="operator.js"></script>
 <script type="module" src="task-builder.js"></script>
 <script type="module" src="next-action-engine.js"></script>
 <script type="module" src="collections-ledger.js"></script>
+<script type="module" src="ui-maturity.js"></script>
 </body>
 </html>
