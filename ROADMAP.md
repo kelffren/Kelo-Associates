@@ -391,3 +391,107 @@ La primera victoria será mucho más concreta:
 > Un cliente escribe, se agenda correctamente, la app recuerda qué llevar y a qué hora, el encuentro ocurre y el resultado queda registrado sin depender de la memoria de una persona.
 
 Cuando eso sea sólido, construiremos encima el sistema operativo completo de Kelo Associates.
+
+---
+
+## 15. Operator OS — Relojes, Zara y Moissanita
+
+La primera operación real ampliada se centra en tres líneas concretas: relojes, ropa de Zara y joyería de moissanita. Operator OS debe ser una herramienta para ejecutar el día, no un CRM genérico.
+
+Navegación operativa:
+
+- `HOY` — próxima mejor acción.
+- `CHATS` — WhatsApp + intención + takeover humano.
+- `ORDERS` — reservado, pagado, listo, delivery, entregado.
+- `PRODUCTS` — inventario + demanda real.
+- `MONEY` — cobrado, pendiente y por cobrar.
+
+Funciones ya incorporadas al prototipo:
+
+- medidor de intención/HOT por conversación;
+- alertas de oportunidades calientes;
+- Next Action Engine;
+- `WHAT AM I FORGETTING?`;
+- tareas rápidas estructuradas;
+- inventario sensible a demanda;
+- pedidos y cobros;
+- registro separado del núcleo CRM existente.
+
+### Tareas rápidas
+
+La tarea debe evitar escritura siempre que sea posible. Constructor minimalista con:
+
+- acción: Comprar, Vender, Reparar, Cambiar, Llamar, Confirmar, Cobrar, Entregar, Conseguir, Follow-up;
+- negocio;
+- cliente;
+- producto;
+- fecha/hora;
+- anticipación de alerta;
+- prioridad;
+- nota opcional.
+
+La meta es convertir una intención en una tarea accionable en pocos toques.
+
+---
+
+## 16. Fiado / Cuentas por cobrar
+
+Problema real: se realizan ventas con saldos pendientes y el dueño puede olvidar cobrar. El sistema debe convertir cada saldo pendiente en una obligación persistente hasta que se resuelva.
+
+### Principio
+
+Una deuda nunca desaparece porque cambie la fecha prometida.
+
+Cada cuenta debe preservar:
+
+- monto original;
+- monto pagado;
+- balance restante;
+- fecha original prometida;
+- fecha actual de cobro;
+- número de promesas;
+- promesas incumplidas;
+- lista de pagos;
+- historial de reagendamientos;
+- estado: open / overdue / paid / written_off.
+
+### Acciones operativas
+
+- `PAID` — registrar pago y cerrar saldo cuando llegue a cero.
+- `REMIND` — preparar acción de cobro.
+- `RESCHEDULE` — mover próxima fecha SIN borrar la fecha original ni los incumplimientos.
+- `WHAT AM I FORGETTING?` debe subir las deudas vencidas y las que vencen hoy.
+
+### Perfil de pago
+
+Kelo puede mostrar hechos históricos observables para ayudar al dueño a recordar el comportamiento comercial del cliente, por ejemplo:
+
+- cuánto ha comprado;
+- cuánto ha pagado;
+- cuántas veces pagó tarde;
+- cuántas promesas incumplió;
+- deuda abierta actual.
+
+La decisión de fiar o no fiar permanece humana. El sistema no concede crédito automáticamente ni define límites automáticos de financiación.
+
+### Audio y texto
+
+Cuando exista backend/IA real, las conversaciones y notas de audio autorizadas podrán alimentar eventos estructurados como:
+
+`PROMISE_TO_PAY(amount, date)`
+
+El sistema propondrá actualizar el cobro, pero preservará todo el historial anterior.
+
+---
+
+## 17. Regla permanente de contexto y ejecución
+
+A partir de esta etapa, cuando el usuario diga **“ejecuta”** respecto a una nueva función, workflow o lógica de Kelo Associates:
+
+1. inspeccionar primero el estado real del repositorio;
+2. integrar la función sin duplicar sistemas existentes;
+3. mantener la distinción entre función real, mock y pendiente de backend;
+4. registrar en `ROADMAP.md` la intención del producto, reglas y flujo relevante de esa ejecución;
+5. si afecta estado técnico, actualizar también la documentación técnica correspondiente cuando sea necesario.
+
+`ROADMAP.md` actúa como memoria de producto para que futuros agentes entiendan no solo qué existe, sino **por qué existe y cómo debe comportarse**.
