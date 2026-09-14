@@ -1,4 +1,4 @@
-const BUILD='AUTO_VERSION_SEED';
+const BUILD='1d971bcf5b94e2bbd65029ff41d2b2ed42972d60';
 const CACHE=`kelo-associates-${BUILD.slice(0,12)}`;
 const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./app.js','./data.js','./integrations.js','./manifest.webmanifest','./icon.svg'];
 
