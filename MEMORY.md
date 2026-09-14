@@ -1,448 +1,163 @@
 # KELO ASSOCIATES — MEMORIA OPERATIVA Y TÉCNICA
 
-Este documento existe para que cualquier agente, desarrollador o sesión futura pueda retomar el proyecto sin perder decisiones, intención ni contexto.
+> Documento obligatorio de contexto para cualquier agente o desarrollador que continúe el proyecto.
 
-## 0. Identidad del proyecto
+## 0. Identidad
 
-**Nombre:** Kelo Associates
+- Repositorio: `kelffren/Kelo-Associates`
+- Rama de producción: `main`
+- Frontend: Vanilla HTML + CSS + JavaScript, mobile-first.
+- Producto inicial: **Kelo Inbox / Kelo Associates V0.1**.
+- Piloto operativo: venta de relojes.
+- Tesis: el cliente pertenece a Kelo Associates; las verticales son módulos.
 
-**Repositorio:** `kelffren/Kelo-Associates`
+Kelo Associates no es una app de relojes ni un clon de WhatsApp. Es un sistema operativo comercial para recordar, coordinar y medir relaciones con clientes a través de distintas líneas de negocio.
 
-**Rama principal:** `main`
+## 1. Norte del producto
 
-**Estado actual:** inicio de Fase 0 / prototipo funcional.
+La primera victoria es concreta:
 
-**Producto inicial:** `Kelo Inbox`.
+> Un cliente escribe, se identifica, se agenda, la app recuerda qué hay que llevar y cuándo, el encuentro ocurre, el resultado se registra y el historial/venta queda asociado al cliente sin depender de memoria humana.
 
-Kelo Inbox no es el producto final. Es la primera interfaz operativa de un sistema más grande para gestionar relaciones comerciales, leads, conversaciones, citas, tareas, representantes, ventas y servicios múltiples.
+Toda función nueva debe ayudar al menos a una de estas metas:
 
----
+1. evitar un olvido;
+2. reducir pasos/tiempo;
+3. aumentar probabilidad de cierre;
+4. producir información útil;
+5. permitir escalar sin perder control.
 
-## 1. Tesis principal
+## 2. Estado actual — 2026-09-14
 
-Kelo Associates será una capa de confianza y coordinación entre clientes y proveedores/servicios.
+La Fase 0 dejó de ser solo maqueta. `main` contiene un CRM local funcional con flujo extremo a extremo y estructura preparada para backend real.
 
-La compañía no debe pensarse como una colección desconectada de negocios. El activo principal será la relación acumulada con el cliente y la capacidad de entender qué necesita, coordinar quién lo atiende, medir qué pasó y volver a servirlo en el futuro.
+### Implementado
 
-Por eso el **cliente es global** y las verticales son módulos.
+- UI mobile-first con safe areas de iPhone.
+- PWA (`manifest.webmanifest`, `service-worker.js`, `icon.svg`).
+- Selector `WhatsApp 1 / WhatsApp 2 / WhatsApp 3 / Todos` con datos mock.
+- Inbox unificado con filtros Todos / sin responder / HOT / follow-up.
+- Hilo de conversación simulado y envío local de mensajes.
+- Clientes globales con búsqueda, estado, fuente, intereses, responsable y LTV.
+- Creación de clientes.
+- Perfil único del cliente con oportunidades, citas e historial.
+- Asignación manual de responsable.
+- Agenda: próximas / hoy / pasadas.
+- Creación de citas con fecha, hora, lugar, artículos, valor, responsable y notas.
+- Generación automática de tareas al crear cita.
+- Pantalla `Hoy` con KPIs, citas, prioridades y follow-ups vencidos.
+- `Bolsa de salida` agregada desde artículos de las citas del día.
+- Checklist de preparación y `Preparar todo`.
+- Recordatorios configurables: día anterior, resumen de mañana, 2 horas, 30 minutos, resultado posterior.
+- Tareas manuales.
+- Notificaciones web locales cuando el navegador lo permite.
+- Resultado de cita: vendido / follow-up / cancelado / no-show.
+- Registro de ventas.
+- Oportunidades y etapas básicas.
+- Timeline/auditoría local.
+- Métricas: no respondidos, ventas, cierre, valor vendido, follow-ups, citas, no-shows, clientes, producción por canal y representante.
+- Import/export JSON.
+- Persistencia local `localStorage`.
+- Selector de vertical base: Watches / Bathroom / Kitchen / Roofing / Autos.
+- Esquema PostgreSQL/Supabase en `supabase/schema.sql`.
+- Contrato de backend/integraciones en `API_CONTRACT.md`.
+- QA automático de sintaxis + integridad de seed mediante GitHub Actions.
 
-Ejemplo conceptual:
+### Deliberadamente NO conectado todavía
 
-```text
-Cliente Juan Pérez
- ├─ Relojes
- ├─ Bathroom Remodeling
- ├─ Autos
- └─ futuras necesidades
-```
+- WhatsApp Business Platform real.
+- SMS real.
+- Email real.
+- autenticación real;
+- Supabase/PostgreSQL real;
+- webhooks;
+- llamadas/grabaciones;
+- automatización externa;
+- IA de scoring/resúmenes.
 
-La plataforma debe preservar ese historial en un perfil único.
+No fingir que estas integraciones funcionan. Requieren backend, credenciales y proveedores autorizados.
 
----
+## 3. Archivos principales
 
-## 2. Primera fase escogida
+- `ROADMAP.md` — visión/fases del producto.
+- `MEMORY.md` — este documento.
+- `README.md` — cómo ejecutar y estado resumido.
+- `index.html` — shell/markup de la SPA.
+- `styles.css` — sistema visual responsive.
+- `app.js` — flujo operativo, render y acciones.
+- `data.js` — modelo local + datos seed.
+- `integrations.js` — frontera de integraciones, sin secretos.
+- `manifest.webmanifest` — instalación PWA.
+- `service-worker.js` — caché offline.
+- `supabase/schema.sql` — esquema persistente futuro.
+- `API_CONTRACT.md` — endpoints y contrato WhatsApp/backend.
+- `tests/state-smoke.js` — validaciones de integridad del estado.
+- `.github/workflows/qa.yml` — QA automático.
 
-La primera fase será un inbox/CRM web para administrar **3 WhatsApp** y el flujo de venta de relojes.
+## 4. Modelo universal
 
-La razón no es porque el proyecto vaya a ser solamente de relojes. Es porque el negocio de relojes ofrece un caso real, frecuente y fácil de comprobar para validar el sistema operativo.
-
-Problemas actuales que se quieren resolver:
-
-- varios WhatsApp;
-- conversaciones dispersas;
-- clientes que piden relojes y luego se olvida el modelo;
-- citas pactadas dentro del chat;
-- falta de una agenda central;
-- olvidar llevar un reloj solicitado;
-- no recordar preparar artículos el día anterior;
-- falta de seguimiento;
-- falta de métricas;
-- falta de historial único por cliente.
-
----
-
-## 3. Decisión técnica principal
-
-El frontend se construirá en **Vanilla HTML + CSS + JavaScript**, mobile-first, siguiendo una filosofía similar a Kelo World.
-
-### No hacer por defecto
-
-- No React solo por moda.
-- No Next.js sin necesidad demostrada.
-- No introducir dependencias pesadas si el navegador puede resolverlo.
-- No bloquear la UI inicial por una integración externa.
-
-### Sí hacer
-
-- componentes visuales claros aunque estén implementados en JS vanilla;
-- módulos separados cuando el proyecto crezca;
-- estado predecible;
-- diseño mobile-first;
-- PWA posteriormente;
-- datos mock primero;
-- backend después;
-- APIs externas aisladas detrás de nuestro servidor.
-
----
-
-## 4. Arquitectura prevista
-
-```text
-[ iPhone / Android / Desktop ]
-             │
-             ▼
-      Kelo Associates UI
-      HTML + CSS + JS
-             │
-             ▼
-          REST API
-             │
-      ┌──────┴──────┐
-      ▼             ▼
- PostgreSQL       Integraciones
- / Supabase       externas
-                    │
-                    ├─ WhatsApp
-                    ├─ SMS
-                    ├─ Email
-                    └─ otras
-```
-
-### Seguridad obligatoria
-
-Nunca colocar tokens secretos, claves privadas ni credenciales de WhatsApp en el frontend.
-
----
-
-## 5. Filosofía del producto
-
-La aplicación debe sentirse como un **asistente operativo**, no como una base de datos que obliga al usuario a alimentar formularios todo el día.
-
-Debe responder de inmediato:
-
-- ¿A quién tengo que contestar?
-- ¿Qué citas tengo hoy?
-- ¿Qué debo llevar?
-- ¿Qué me falta preparar?
-- ¿A quién tengo que dar seguimiento?
-- ¿Qué se vendió?
-- ¿Qué representante tiene cada cliente?
-
-La pantalla `Hoy` tendrá prioridad alta porque resume la operación diaria.
-
----
-
-## 6. Estructura inicial de navegación
-
-### Hoy
-
-Centro operativo del día.
-
-Debe mostrar:
-
-- citas de hoy;
-- clientes;
-- hora;
-- lugar;
-- artículos necesarios;
-- estado de preparación;
-- recordatorios críticos;
-- chats sin responder;
-- follow-ups vencidos.
-
-### Chats
-
-Selector superior:
+Estas entidades son núcleo, no específicas de relojes:
 
 ```text
-WhatsApp 1 | WhatsApp 2 | WhatsApp 3 | Todos
+Client
+Channel
+Conversation
+Message
+Appointment
+Task
+Reminder Rule
+Opportunity
+Assignment
+Agent
+Sale/Contract
+Timeline Event
 ```
 
-Debe permitir una bandeja unificada sin perder el canal de origen.
+El frontend local utiliza estructuras equivalentes a estas entidades. El objetivo al conectar backend es sustituir el adaptador de persistencia, no reescribir UX.
 
-### Clientes
+### Cliente global
 
-Cada cliente debe tener un perfil único con historial.
-
-### Agenda
-
-Citas próximas y pasadas.
-
-### Recordatorios
-
-Tareas temporales y alertas.
-
-### Más
-
-Configuración, métricas, equipo y futuros módulos.
-
----
-
-## 7. Modelo mental de cliente
-
-Un cliente no es un chat.
-
-Un chat es una interacción que pertenece a un cliente.
-
-Modelo conceptual:
+Un cliente puede acumular actividad de múltiples verticales:
 
 ```text
-CLIENTE
- ├─ teléfonos
- ├─ canales
- ├─ conversaciones
- ├─ citas
- ├─ notas
- ├─ tareas
- ├─ oportunidades
- ├─ compras/contratos
- └─ eventos de historial
+Juan Pérez
+├─ Watches — compra
+├─ Bathroom — contrato
+├─ Auto — compra
+└─ historial/LTV global
 ```
 
-Si el mismo cliente aparece posteriormente en otra vertical, debe conservar su identidad e historial.
+Nunca modelar el mismo humano como clientes independientes solo porque cambió de vertical.
 
----
+## 5. Verticales
 
-## 8. Entidades universales
+### Watches — piloto
 
-Estas deben sobrevivir cuando el proyecto deje de ser solo relojes:
-
-### Client
-- id
-- name
-- phone
-- email
-- status
-- owner/assigned_agent
-- source
-- created_at
-- updated_at
-
-### Channel
-- id
-- type
-- account
-- external_identifier
-
-### Conversation
-- id
-- client_id
-- channel_id
-- status
-- last_message_at
-
-### Message
-- id
-- conversation_id
-- direction
-- body
-- status
-- sent_at
-
-### Appointment
-- id
-- client_id
-- vertical
-- date_time
-- location
-- status
-- assigned_agent
-- notes
-
-### Task
-- id
-- client_id
-- appointment_id optional
-- title
-- due_at
-- status
-- priority
-
-### Reminder
-- id
-- task/appointment relation
-- trigger_at
-- delivery method
-- status
-
-### Opportunity
-- id
-- client_id
-- vertical
-- estimated_value
-- stage
-- source
-
-### Assignment
-- id
-- object type
-- object id
-- agent
-- assigned_at
-
-### Sale / Contract
-- id
-- client_id
-- vertical
-- amount
-- commission
-- closed_at
-
-### Timeline Event
-- id
-- client_id
-- type
-- payload
-- timestamp
-
----
-
-## 9. Vertical Relojes — campos especiales
-
-Estos campos no deben contaminar el núcleo global.
-
-- modelo solicitado;
-- referencia;
-- variante/color;
+Campos/operación específicos:
+- modelo / variante;
 - precio;
-- con caja / sin caja;
-- inventario relacionado;
-- lugar de encuentro;
-- lista de relojes que llevar;
-- accesorios que llevar;
-- resultado de la cita.
+- caja / accesorios;
+- artículos que llevar;
+- punto de encuentro;
+- resultado de cita.
 
-### Ejemplo de cita
+### Bathroom / Kitchen / Roofing
 
-```text
-Carlos M.
-Daytona negro
-5:30 PM
-Bronx
-
-Llevar:
-✓ Daytona negro
-✓ Submariner
-□ GMT
-```
-
----
-
-## 10. Bolsa de salida
-
-Esta característica es prioritaria.
-
-Debe sumar lo necesario para todas las citas relevantes y presentar una checklist única antes de salir.
-
-Ejemplo:
-
-```text
-BOLSA DE SALIDA
-
-2 × Daytona negro
-1 × Submariner
-1 × GMT
-2 × cajas
-
-Estado: 3/6 preparados
-```
-
-Puede evolucionar en el futuro para otras verticales como documentación, muestras, herramientas, contratos, llaves, etc.
-
----
-
-## 11. Recordatorios
-
-Al agendar una cita deben poder generarse automáticamente tareas como:
-
-- preparar artículos la noche anterior;
-- resumen del día;
-- recordar cita 2 horas antes;
-- recordar salida 30 minutos antes;
-- pedir confirmación al cliente;
-- registrar el resultado después.
-
-El usuario debe poder activar/desactivar reglas.
-
-No construir automatizaciones agresivas antes de validar el flujo manual.
-
----
-
-## 12. WhatsApp — decisión de integración
-
-La interfaz puede mostrar tres cuentas desde el principio usando datos simulados.
-
-La conexión real llegará después mediante la **plataforma oficial de WhatsApp Business**, con backend y webhooks.
-
-Principios:
-
-- no automatizar con hacks de WhatsApp Web;
-- no guardar tokens en JS del navegador;
-- identificar siempre el canal/número por el que entró el mensaje;
-- mantener cliente y conversación como entidades separadas;
-- construir la UI de forma que funcione incluso si WhatsApp está desconectado temporalmente.
-
----
-
-## 13. Métricas importantes
-
-Primeras métricas útiles:
-
-- chats sin responder;
-- primera respuesta;
-- tiempo promedio de respuesta;
-- citas de hoy;
-- citas completadas;
-- cancelaciones;
-- no-shows;
-- follow-ups pendientes;
-- ventas cerradas;
-- tasa de cierre;
-- valor vendido;
-- rendimiento por número/canal;
-- rendimiento por representante.
-
-Más adelante:
-
-- coste por lead;
-- revenue por fuente;
-- comisión;
-- lifetime value;
-- cross-sell entre verticales;
-- reactivación de clientes.
-
----
-
-## 14. Expansión futura
-
-### Bathroom Remodeling
-
-Campos previstos:
-
+Previstos:
 - ZIP;
 - homeowner;
-- full/partial remodel;
+- tipo de proyecto;
 - presupuesto;
 - urgencia;
 - fotos;
 - disponibilidad;
 - financiamiento;
-- representante asignado;
-- estimado;
-- contrato.
-
-### Kitchen Remodeling
-
-Reutiliza el núcleo de Bathroom con campos propios.
-
-### Roofing
-
-Reutiliza leads, cita, representante, estimado y contrato.
+- representante;
+- estimate/contract.
 
 ### Autos
 
-Campos previstos:
-
+Previstos:
 - vehículo;
 - presupuesto;
 - financiamiento;
@@ -450,160 +165,153 @@ Campos previstos:
 - cita;
 - entrega.
 
----
+No contaminar el núcleo con campos verticales. Usar `vertical`, `vertical_data` o tablas especializadas.
 
-## 15. Asignaciones y representantes
-
-La plataforma debe evolucionar hacia un sistema donde un lead se pueda asignar manualmente a una persona.
-
-Primera etapa:
+## 6. Flujo crítico actual
 
 ```text
-Lead → seleccionar representante → Asignar
+Chat
+ → Cliente
+ → Cita
+ → Recordatorios/Tareas
+ → Hoy
+ → Bolsa de salida
+ → Encuentro
+ → Resultado
+ → Venta o Follow-up
+ → Timeline + Métricas + LTV
 ```
 
-Después puede existir un botón de automatización que dispare acciones autorizadas como:
+Este flujo debe permanecer funcional antes y después de conectar APIs externas.
 
-- SMS;
-- email;
-- WhatsApp;
-- llamada/solicitud de llamada;
-- notificación interna.
+## 7. Recordatorios
 
-La automatización debe ser opcional y auditable.
+Al crear una cita, `app.js` usa `reminderRules` para generar tareas relativas a la hora del encuentro.
 
----
+Reglas actuales:
+- noche/día anterior: preparar artículos;
+- mañana del día: revisar cita;
+- 2 horas antes: confirmar;
+- 30 min antes: salida/preparación final;
+- después: registrar resultado.
 
-## 16. Historial y aprendizaje
+Las notificaciones web no garantizan ejecución si iOS cierra completamente la PWA. Para alertas fiables con app cerrada hará falta backend/push programado. No prometer lo contrario.
 
-Cada acción importante debe dejar rastro:
+## 8. Bolsa de salida
 
-- quién respondió;
-- quién cambió un estado;
-- quién asignó el cliente;
-- cuándo se creó la cita;
-- si se confirmó;
-- resultado;
-- venta;
-- notas.
+Se calcula desde `appointments` del día con `status=scheduled`.
 
-Esto permitirá mejorar calidad, entrenar procesos y eventualmente usar IA sobre información autorizada.
+Los artículos se agrupan por nombre y cantidad. Marcar un artículo preparado actualiza todas las coincidencias del día. `Preparar todo` marca todos los items de las citas de hoy.
 
----
+Esta función es prioritaria porque resuelve el problema real inicial: olvidar relojes/accesorios que un cliente pidió ver.
 
-## 17. IA futura
+## 9. Seguridad e integraciones
 
-No es necesaria para V0.1.
+Arquitectura obligatoria:
 
-Cuando el sistema básico funcione, la IA puede ayudar a:
+```text
+PWA/Browser
+   ↓
+Kelo REST API
+   ↓
+PostgreSQL/Supabase
+   ↓
+WhatsApp / SMS / Email / otros
+```
 
-- resumir chats;
-- detectar intención;
-- detectar urgencia;
-- sugerir respuesta;
-- marcar HOT/WARM/COLD;
-- encontrar clientes olvidados;
-- sugerir próxima acción;
-- analizar por qué se cierran o pierden ventas.
+### Prohibido
 
-La IA no debe convertirse en una dependencia para abrir el inbox o ejecutar tareas básicas.
+- token de Meta en frontend;
+- Supabase service-role key en frontend;
+- secretos en GitHub;
+- automatizar WhatsApp Web con hacks como arquitectura de producción;
+- marcar como enviada una acción que el proveedor rechazó.
 
----
+`integrations.js` solo representa estado/capacidad local. La implementación externa debe vivir detrás del backend.
 
-## 18. Criterios de diseño
+## 10. WhatsApp futuro
 
-- Mobile-first real.
-- Usable con una mano.
-- Targets táctiles grandes.
-- Poca escritura manual.
-- Información importante arriba.
-- Estados y colores consistentes.
-- Navegación persistente.
-- No esconder acciones críticas en menús profundos.
-- Velocidad percibida alta.
-- Evitar loaders largos.
+Meta webhook debe:
 
----
+1. validar webhook/firma;
+2. resolver `phone_number_id` a un `Channel`;
+3. normalizar teléfono;
+4. buscar/crear cliente;
+5. buscar/crear conversación;
+6. guardar mensaje idempotente por ID externo;
+7. actualizar unread/last_message;
+8. procesar estados sent/delivered/read/failed;
+9. enviar evento realtime a UI cuando proceda.
 
-## 19. Regla de arquitectura para futuras sesiones
+La UI debe seguir abriendo y mostrando datos aunque WhatsApp temporalmente esté desconectado.
 
-Antes de agregar una función, clasificarla:
+## 11. Persistencia actual y migración
 
-### Núcleo
-Sirve para todas las verticales.
+Hoy: `localStorage`, clave `kelo-associates-v2`.
 
-Ejemplos: cliente, cita, task, assignment.
+Backup: export JSON desde Métricas y reimportar desde Más.
 
-### Vertical
-Sirve solo a un negocio.
+Futuro: backend REST + PostgreSQL/Supabase. `supabase/schema.sql` ya define la base relacional. Mantener IDs/relaciones conceptuales compatibles.
 
-Ejemplo: `watch_model`.
+## 12. QA
 
-### Integración
-Conecta con servicio externo.
+Antes de dar un cambio importante por bueno:
 
-Ejemplo: WhatsApp API.
+```bash
+npm run check
+npm test
+```
 
-### Inteligencia
-Analiza o automatiza sobre datos existentes.
+GitHub Actions ejecuta esas verificaciones en push/PR.
 
-Ejemplo: lead scoring.
+Además hacer QA real en iPhone para flujos táctiles. Los tests actuales validan sintaxis JS y estructura de datos, no reemplazan prueba visual.
 
-No mezclar estas capas sin necesidad.
+## 13. Reglas para futuros agentes
 
----
+Antes de modificar:
 
-## 20. Regla para agentes/desarrolladores
+1. leer `MEMORY.md`;
+2. leer `ROADMAP.md`;
+3. inspeccionar código existente;
+4. no reconstruir funciones ya presentes;
+5. preservar Vanilla/mobile-first salvo razón técnica demostrable;
+6. núcleo universal separado de verticales;
+7. secretos solo servidor;
+8. probar flujo completo tras cambios;
+9. actualizar memoria si cambia arquitectura/estado;
+10. no confundir mock con integración real.
 
-Antes de modificar el proyecto:
+## 14. Próximos hitos de mayor valor
 
-1. Leer `MEMORY.md`.
-2. Leer `ROADMAP.md`.
-3. Inspeccionar el código actual.
-4. No reconstruir funciones existentes sin verificar si ya existen.
-5. Preservar mobile-first.
-6. Mantener el núcleo independiente de la vertical Relojes.
-7. Probar el flujo completo después de cualquier cambio relevante.
-8. Documentar decisiones importantes.
+Orden recomendado:
 
----
+1. QA visual real desde iPhone/PWA.
+2. activar hosting/GitHub Pages o entorno equivalente.
+3. conectar Supabase/backend y migrar persistencia local.
+4. autenticación/usuarios y permisos.
+5. conectar 3 canales reales de WhatsApp Business Platform.
+6. realtime/webhooks.
+7. assignment workflows y notificaciones externas manuales.
+8. comisión/contratos para Kelo Associates.
+9. intake específico de Bathroom y primer lead real.
+10. IA solo después de tener historial real suficiente.
 
-## 21. Definición de éxito de V0.1
+## 15. Definición actual de éxito
 
-Un usuario desde iPhone debe poder:
+Desde un iPhone, sin backend externo, debe poderse:
 
-1. abrir Kelo Associates;
-2. ver `Hoy`;
-3. cambiar entre WhatsApp 1/2/3/Todos;
-4. abrir un chat simulado;
-5. ver el perfil del cliente;
-6. crear o visualizar una cita;
-7. saber qué reloj llevar;
-8. marcarlo preparado;
-9. ver recordatorios;
-10. registrar el resultado.
+- abrir la app;
+- ver Hoy;
+- filtrar 3 WhatsApp mock;
+- abrir chat;
+- abrir/crear cliente;
+- crear cita;
+- generar recordatorios;
+- ver qué llevar;
+- marcar preparación;
+- registrar resultado;
+- crear venta/follow-up;
+- observar historial y métricas;
+- cerrar y volver sin perder el estado local.
 
-Todo esto debe funcionar sin backend real para validar UX primero.
-
----
-
-## 22. Estado al crear esta memoria
-
-- Repositorio creado y disponible.
-- `ROADMAP.md` creado.
-- Se está creando el primer `index.html` funcional.
-- No hay todavía backend conectado.
-- No hay todavía WhatsApp real conectado.
-- Los datos iniciales son mock/demostración.
-
----
-
-## 23. Norte a largo plazo
-
-Kelo Associates debe convertirse en un sistema que recuerde lo que una operación humana suele olvidar, coordine lo que normalmente queda disperso y convierta relaciones aisladas en una red comercial acumulativa.
-
-La tecnología no es el producto por sí sola. El producto es:
-
-> cliente correcto + necesidad entendida + persona correcta + seguimiento correcto + resultado medido.
-
-La primera prueba de esa idea será mucho más simple: que ningún reloj pedido para una cita vuelva a depender únicamente de la memoria.
+El siguiente salto de producto no es añadir más pantallas: es reemplazar mocks por datos reales manteniendo este flujo estable.
