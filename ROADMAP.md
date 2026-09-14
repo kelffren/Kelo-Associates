@@ -533,3 +533,46 @@ TASK RÁPIDA y futuras acciones contextuales deben abrir en sheets inferiores co
 ### Regla visual
 
 Si un cambio hace la interfaz más llamativa pero más lenta de leer, más densa o más difícil de operar con una mano, se rechaza.
+
+---
+
+## 19. Madurez UI — 30 mejoras aplicadas
+
+Operator OS incorpora una capa visual e interacción separada (`operator-mature.css` + `ui-maturity.js`) para madurar la interfaz sin contaminar la lógica comercial. Las mejoras implementadas son:
+
+1. shell más estrecho y respirado para lectura natural;
+2. escala tipográfica consistente tipo sistema;
+3. encabezado con jerarquía clara y menos ruido;
+4. espaciado vertical coherente entre bloques;
+5. selector de negocio como segmented control;
+6. active state sobrio y perceptible;
+7. feedback táctil/pressed state;
+8. jerarquía primaria/secundaria consistente en botones;
+9. targets táctiles mínimos más cómodos;
+10. foco visible para teclado/accesibilidad;
+11. hero sin caja decorativa innecesaria;
+12. view headers más limpios y editoriales;
+13. KPIs con números tabulares y mejor lectura;
+14. cards con superficie, no exceso de borders;
+15. radios consistentes en toda la UI;
+16. metadata secundaria con contraste controlado;
+17. heat badges diferenciados sin ruido visual;
+18. barras de heat más delgadas y legibles;
+19. acciones contextuales agrupadas y espaciadas;
+20. patrón definido para estados vacíos;
+21. `WHAT AM I FORGETTING?` tratado como bloque de atención, no error;
+22. alertas HOT con blur funcional y jerarquía de modal ligero;
+23. toast compacto tipo pill con feedback no invasivo;
+24. TASK RÁPIDA como bottom sheet maduro;
+25. controles del task builder agrupados por decisión;
+26. inputs/selects con superficies suaves y targets grandes;
+27. preview de tarea como confirmación contextual;
+28. estados de dinero con semántica visual consistente;
+29. tabs de escritorio tratados como segmented navigation;
+30. en iPhone, navegación principal flotante inferior con safe-area, glass discreto y alcance de una mano.
+
+Además se añadieron mejoras de accesibilidad/interacción: roles de tab, `aria-selected`, live regions, cierre por Escape, título dinámico por vista/negocio, soporte `prefers-reduced-motion` y comportamiento de date/time picker cuando el navegador lo permite.
+
+### Regla de madurez
+
+Una pantalla madura debe poder responder en menos de unos segundos: qué está pasando, qué necesita atención y cuál es la siguiente acción. Si requiere interpretar demasiadas cajas, colores o textos, debe simplificarse antes de añadir funciones nuevas.
