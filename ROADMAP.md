@@ -495,3 +495,41 @@ A partir de esta etapa, cuando el usuario diga **“ejecuta”** respecto a una 
 5. si afecta estado técnico, actualizar también la documentación técnica correspondiente cuando sea necesario.
 
 `ROADMAP.md` actúa como memoria de producto para que futuros agentes entiendan no solo qué existe, sino **por qué existe y cómo debe comportarse**.
+
+---
+
+## 18. Dirección visual — Apple-inspired, vanilla y espaciosa
+
+La interfaz de Operator OS debe sentirse premium, tranquila, clara y rápida sin copiar literalmente componentes propietarios de Apple. La implementación continúa siendo 100% HTML/CSS/JavaScript vanilla.
+
+Principios visuales:
+
+- contenido primero; la decoración nunca compite con la tarea;
+- jerarquía mediante tamaño, espacio y agrupación en lugar de exceso de bordes;
+- tipografía del sistema `-apple-system` / `BlinkMacSystemFont` para sentirse natural en iPhone sin distribuir fuentes externas;
+- superficies translúcidas y blur únicamente para navegación, sheets y capas funcionales;
+- tarjetas amplias, radios suaves y separación generosa;
+- una acción primaria clara por contexto;
+- animaciones cortas y discretas, con soporte `prefers-reduced-motion`;
+- safe areas de iPhone respetadas;
+- soporte automático light/dark mediante `prefers-color-scheme`;
+- branding discreto: la utilidad tiene prioridad sobre logos y decoración.
+
+### Navegación móvil
+
+En iPhone, `HOY · CHATS · ORDERS · PRODUCTS · MONEY` funciona como navegación global y debe permanecer accesible en una barra flotante inferior translúcida. La parte superior queda libre para contenido, filtros de negocio y acciones importantes.
+
+### Sheets
+
+TASK RÁPIDA y futuras acciones contextuales deben abrir en sheets inferiores con:
+
+- dimming/blur de fondo;
+- esquinas amplias;
+- handle superior;
+- controles agrupados;
+- botón principal claro;
+- escritura libre solo cuando aporte valor.
+
+### Regla visual
+
+Si un cambio hace la interfaz más llamativa pero más lenta de leer, más densa o más difícil de operar con una mano, se rechaza.
