@@ -1,3 +1,5 @@
+import './contact-vault.js';
+
 const SW_URL='./service-worker.js';
 const CHECK_INTERVAL=2*60*1000;
 let checking=false;
