@@ -1,5 +1,6 @@
 import './contact-vault.js';
 import './meta-hub.js';
+import './whatsapp-test-bridge.js';
 
 const SW_URL='./service-worker.js';
 const CHECK_INTERVAL=2*60*1000;
@@ -65,7 +66,7 @@ async function checkForUpdate(force=false){
   }finally{checking=false}
 }
 
-if('serviceWorker' in navigator){
+if('serviceWorker'in navigator){
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
     if(!hadController){hadController=true;return}
     if(reloading)return;
