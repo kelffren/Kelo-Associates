@@ -1,4 +1,5 @@
 import './contact-vault.js';
+import './meta-hub.js';
 
 const SW_URL='./service-worker.js';
 const CHECK_INTERVAL=2*60*1000;
