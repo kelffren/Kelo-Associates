@@ -1,6 +1,6 @@
 const BUILD='2d5aa20b82200aeeb098d55bbc46790d91dc0737';
 const CACHE=`kelo-associates-${BUILD.slice(0,12)}`;
-const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./app.js','./data.js','./integrations.js','./manifest.webmanifest','./icon.svg'];
+const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./meta-hub.js','./app.js','./data.js','./integrations.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
