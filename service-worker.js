@@ -1,4 +1,4 @@
-const BUILD='a70cc3e8ce48d9fe4eca17d7bc15ef3a20f8005f';
+const BUILD='3ba8d858ce67f3dfdcdf43a98fbea796e578de67';
 const CACHE=`kelo-associates-${BUILD.slice(0,12)}`;
 const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./meta-hub.js','./app.js','./data.js','./integrations.js','./manifest.webmanifest','./icon.svg'];
 
