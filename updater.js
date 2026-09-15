@@ -1,4 +1,5 @@
 import './contact-vault.js';
+import './vault-identity.js';
 import './meta-hub.js';
 import './whatsapp-test-bridge.js';
 
