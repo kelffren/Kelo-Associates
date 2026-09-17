@@ -1,29 +1,19 @@
 import {createClient} from 'npm:@supabase/supabase-js@2';
 
-const cors={
-  'Access-Control-Allow-Origin':'*',
-  'Access-Control-Allow-Headers':'authorization, content-type, x-kelo-workspace',
-  'Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'
-};
+const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, content-type, x-kelo-workspace','Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json'}});
 const env=(name:string)=>Deno.env.get(name)||'';
-
 function secretKey(){const modern=env('SUPABASE_SECRET_KEYS');if(modern){try{return JSON.parse(modern).default||''}catch{}}return env('SUPABASE_SERVICE_ROLE_KEY')}
 const supabase=createClient(env('SUPABASE_URL'),secretKey(),{auth:{persistSession:false,autoRefreshToken:false}});
 const workspaceOf=(req:Request)=>String(req.headers.get('x-kelo-workspace')||'default').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,64)||'default';
 function authorized(req:Request){const expected=env('KELO_ADMIN_TOKEN');if(!expected)return false;const supplied=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'');return supplied.length===expected.length&&supplied===expected}
 async function audit(workspace:string,event_type:string,payload:Record<string,unknown>={},object_type?:string,object_id?:string){await supabase.from('kelo_audit').insert({workspace,event_type,payload,object_type:object_type||null,object_id:object_id||null})}
 
-async function materializeRetail(workspace:string,state:any){
-  const inventory=state?.retail?.inventory||{};
-  for(const [key,record] of Object.entries<any>(inventory)){
-    const [vertical,sku,...rest]=String(key).split(':');const variant_key=rest.join(':')||'default';if(!['watches','zara','moissanite'].includes(vertical)||!sku)continue;
-    await supabase.from('kelo_inventory').upsert({workspace,vertical,sku,variant_key,quantity:Math.max(0,Math.floor(Number(record?.quantity||0))),updated_at:new Date().toISOString()},{onConflict:'workspace,vertical,sku,variant_key'});
-  }
-  for(const order of state?.retail?.orders||[]){if(!order?.id||!['watches','zara','moissanite'].includes(order.vertical))continue;await supabase.from('kelo_orders').upsert({id:String(order.id),workspace,client_id:order.clientId||null,vertical:order.vertical,status:order.status||'draft',total:Number(order.total||0),payload:order,updated_at:new Date().toISOString()},{onConflict:'id'})}
+async function materializeOrders(workspace:string,state:any){
+  for(const order of state?.retail?.orders||[]){if(!order?.id||!['watches','zara','moissanite'].includes(order.vertical))continue;await supabase.from('kelo_orders').upsert({id:String(order.id),workspace,client_id:order.clientId||null,vertical:order.vertical,status:order.status||'draft',total:Number(order.total||0),payment_provider_id:order.paymentProviderId||null,payment_url:order.paymentUrl||null,payload:order,updated_at:new Date().toISOString()},{onConflict:'id'})}
 }
 async function getState(workspace:string){const {data,error}=await supabase.from('kelo_state').select('revision,state,updated_at').eq('workspace',workspace).maybeSingle();if(error)throw error;return data||{revision:0,state:null,updated_at:null}}
-async function putState(workspace:string,body:any){const expectedRevision=Number(body?.expectedRevision||0),nextState=body?.state;if(!nextState||typeof nextState!=='object')return json({error:'invalid_state'},400);const current=await getState(workspace),currentRevision=Number(current?.revision||0);if(currentRevision!==expectedRevision)return json({error:'revision_conflict',message:'Remote state changed',current},409);const nextRevision=currentRevision+1;const {error}=await supabase.from('kelo_state').upsert({workspace,revision:nextRevision,state:nextState,updated_at:new Date().toISOString()},{onConflict:'workspace'});if(error)throw error;await materializeRetail(workspace,nextState);await audit(workspace,'state.saved',{revision:nextRevision});return json({ok:true,revision:nextRevision})}
+async function putState(workspace:string,body:any){const expectedRevision=Number(body?.expectedRevision||0),nextState=body?.state;if(!nextState||typeof nextState!=='object')return json({error:'invalid_state'},400);const current=await getState(workspace),currentRevision=Number(current?.revision||0);if(currentRevision!==expectedRevision)return json({error:'revision_conflict',message:'Remote state changed',current},409);const nextRevision=currentRevision+1;const {error}=await supabase.from('kelo_state').upsert({workspace,revision:nextRevision,state:nextState,updated_at:new Date().toISOString()},{onConflict:'workspace'});if(error)throw error;await materializeOrders(workspace,nextState);await audit(workspace,'state.saved',{revision:nextRevision});return json({ok:true,revision:nextRevision})}
 
 async function sendTwilio(workspace:string,body:any){
   const channel=String(body?.channel||'sms'),to=String(body?.to||'').trim(),message=String(body?.body||'').trim();if(!['sms','whatsapp'].includes(channel)||!to||!message)return json({error:'invalid_message'},400);
@@ -44,16 +34,9 @@ async function inventoryRoute(req:Request,workspace:string,url:URL){
   if(req.method==='GET'){const vertical=url.searchParams.get('vertical')||'',sku=url.searchParams.get('sku')||'',variant_key=url.searchParams.get('variantKey')||'default';const {data,error}=await supabase.from('kelo_inventory').select('*').eq('workspace',workspace).eq('vertical',vertical).eq('sku',sku).eq('variant_key',variant_key).maybeSingle();if(error)throw error;return json(data||{quantity:null,status:'not_tracked'})}
   const body=await req.json(),quantity=Math.floor(Number(body?.quantity));if(!Number.isFinite(quantity)||quantity<0)return json({error:'invalid_quantity'},400);const vertical=String(body?.vertical||''),sku=String(body?.sku||''),variant_key=String(body?.variantKey||'default');if(!['watches','zara','moissanite'].includes(vertical)||!sku)return json({error:'invalid_inventory_key'},400);const record={workspace,vertical,sku,variant_key,quantity,updated_at:new Date().toISOString()};const {data,error}=await supabase.from('kelo_inventory').upsert(record,{onConflict:'workspace,vertical,sku,variant_key'}).select().single();if(error)throw error;await audit(workspace,'inventory.set',{vertical,sku,variant_key,quantity},'inventory',`${vertical}:${sku}:${variant_key}`);return json(data);
 }
-
-async function reserveInventory(workspace:string,body:any){
-  const vertical=String(body?.vertical||''),sku=String(body?.sku||''),variantKey=String(body?.variantKey||'default'),quantity=Math.floor(Number(body?.quantity||0));if(!['watches','zara','moissanite'].includes(vertical)||!sku||quantity<=0)return json({error:'invalid_reservation'},400);
-  const {data,error}=await supabase.rpc('kelo_reserve_inventory',{p_workspace:workspace,p_vertical:vertical,p_sku:sku,p_variant_key:variantKey,p_quantity:quantity});if(error)throw error;const result=Array.isArray(data)?data[0]:data;await audit(workspace,'inventory.reserve',{vertical,sku,variantKey,quantity,...(result||{})},'inventory',`${vertical}:${sku}:${variantKey}`);return json(result||{reserved:false,status:'unknown',remaining:null});
-}
+async function reserveInventory(workspace:string,body:any){const vertical=String(body?.vertical||''),sku=String(body?.sku||''),variantKey=String(body?.variantKey||'default'),quantity=Math.floor(Number(body?.quantity||0));if(!['watches','zara','moissanite'].includes(vertical)||!sku||quantity<=0)return json({error:'invalid_reservation'},400);const {data,error}=await supabase.rpc('kelo_reserve_inventory',{p_workspace:workspace,p_vertical:vertical,p_sku:sku,p_variant_key:variantKey,p_quantity:quantity});if(error)throw error;const result=Array.isArray(data)?data[0]:data;await audit(workspace,'inventory.reserve',{vertical,sku,variantKey,quantity,...(result||{})},'inventory',`${vertical}:${sku}:${variantKey}`);return json(result||{reserved:false,status:'unknown',remaining:null})}
 
 Deno.serve(async(req:Request)=>{
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});const url=new URL(req.url),path=url.pathname.replace(/^.*\/kelo-api/,'')||'/',workspace=workspaceOf(req);
-  try{
-    if(path==='/health')return json({ok:true,service:'kelo-api',providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},time:new Date().toISOString()});if(!authorized(req))return json({error:'unauthorized'},401);
-    if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404);
-  }catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
+  try{if(path==='/health')return json({ok:true,service:'kelo-api',providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},time:new Date().toISOString()});if(!authorized(req))return json({error:'unauthorized'},401);if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404)}catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
 });
