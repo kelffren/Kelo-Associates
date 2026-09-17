@@ -1,6 +1,6 @@
 const BUILD='8e9ac6e7cb91acc76b8c096afce4a21406b0b543';
 const CACHE=`kelo-associates-${BUILD.slice(0,12)}`;
-const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./vault-identity.js','./meta-hub.js','./whatsapp-test-bridge.js','./app.js','./data.js','./integrations.js','./retail-engine.js','./backend-client.js','./remote-sync.js','./voice.html','./voice.css','./voice.js','./voice-core.js','./manifest.webmanifest','./icon.svg'];
+const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./vault-identity.js','./meta-hub.js','./whatsapp-test-bridge.js','./app.js','./data.js','./integrations.js','./retail-engine.js','./backend-client.js','./supabase-auth.js','./remote-sync.js','./voice.html','./voice.css','./voice.js','./voice-core.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
