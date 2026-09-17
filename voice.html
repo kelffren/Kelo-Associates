@@ -24,7 +24,7 @@
       <div class="hero-copy">
         <span class="eyebrow">3 NEGOCIOS · 1 SALES ENGINE</span>
         <h2>Relojes. Zara. Moissanita.</h2>
-        <p>La IA investiga el contexto de cada negocio, consulta catálogo/stock, calcula el precio correcto, crea el pedido y prepara el siguiente paso sin inventar información.</p>
+        <p>La IA consulta catálogo/stock, calcula el precio correcto, crea el pedido y, cuando Central Backend está conectado, reserva inventario, genera el cobro y envía el link sin exponer secretos.</p>
       </div>
       <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="provider-row" id="providerRow"></div>
@@ -35,11 +35,25 @@
       <div id="businessFocus" class="business-focus"></div>
     </section>
 
+    <section class="panel">
+      <div class="section-head"><div><span class="eyebrow">CENTRAL INVENTORY</span><h3>Stock real</h3></div><span class="safe-badge">Autoritativo</span></div>
+      <p class="hint">Cuando el backend esté conectado, este stock manda. El Sales Engine no genera cobro si la variante no está registrada o no quedan unidades.</p>
+      <form id="centralInventoryForm" class="voice-form">
+        <div class="split thirds">
+          <label>Negocio<select name="vertical"><option value="watches">Relojes</option><option value="zara">Ropa Zara</option><option value="moissanite">Moissanita</option></select></label>
+          <label>Variante<input name="variantKey" value="default" autocomplete="off" placeholder="panda|box · M|black · 1ct|silver"></label>
+          <label>Cantidad real<input name="quantity" type="number" min="0" value="0" inputmode="numeric"></label>
+        </div>
+        <div class="split"><label>SKU<input id="centralSku" readonly value="WATCH-CORE"></label><div class="inventory-actions"><button class="secondary wide" id="inventoryLookup" type="button">Consultar</button><button class="run" type="submit">Guardar stock</button></div></div>
+      </form>
+      <div id="inventoryResult" class="run-result" hidden></div>
+    </section>
+
     <section class="kpi-grid" id="voiceKpis" aria-label="Métricas de ventas por voz"></section>
 
     <section class="panel live-panel">
-      <div class="section-head"><div><span class="eyebrow">SALES TEST HARNESS</span><h3>Simular conversación de venta</h3></div><span class="safe-badge">Sin llamada real</span></div>
-      <p class="hint">Prueba el pipeline: cliente → intención de compra → catálogo → precio → stock → pedido → pago/SMS preparado → CRM.</p>
+      <div class="section-head"><div><span class="eyebrow">SALES HARNESS</span><h3>Ejecutar conversación de venta</h3></div><span class="safe-badge">LIVE cuando backend esté conectado</span></div>
+      <p class="hint">Local: prueba el pipeline. Live: usa inventario central, reserva atómica, Stripe y SMS/WhatsApp reales si los proveedores están configurados.</p>
       <form id="voiceDemoForm" class="voice-form">
         <div class="split">
           <label>Nombre<input name="name" value="Maria Rodriguez" autocomplete="off"></label>
@@ -54,12 +68,13 @@
         <div class="split thirds">
           <label>Cantidad<input name="quantity" type="number" min="1" value="1" inputmode="numeric"></label>
           <label>Entrega<select name="fulfillment"><option value="pickup">Pickup</option><option value="delivery">Delivery</option></select></label>
-          <label>Precio manual <input name="manualUnitPrice" type="number" min="0" step="1" inputmode="decimal" placeholder="Solo moissanita"></label>
+          <label>Enviar link por<select name="sendChannel"><option value="sms">SMS</option><option value="whatsapp">WhatsApp</option><option value="none">No enviar</option></select></label>
         </div>
+        <label>Precio manual <input name="manualUnitPrice" type="number" min="0" step="1" inputmode="decimal" placeholder="Solo moissanita si aún no tiene precio configurado"></label>
         <div class="split">
-          <label>Stock disponible<input name="stockAvailable" type="number" min="0" value="5" inputmode="numeric"></label>
+          <label>Stock local/demo<input name="stockAvailable" type="number" min="0" value="5" inputmode="numeric"><small>En LIVE se ignora y se consulta el inventario central.</small></label>
           <div class="check-stack">
-            <label class="check"><input name="stockConfirmed" type="checkbox" checked><span>Stock confirmado</span></label>
+            <label class="check"><input name="stockConfirmed" type="checkbox" checked><span>Stock confirmado (solo demo)</span></label>
             <label class="check"><input name="readyToBuy" type="checkbox" checked><span>Cliente listo para comprar</span></label>
             <label class="check"><input name="variantComplete" type="checkbox" checked><span>Variante ya definida</span></label>
             <label class="check"><input name="withBox" type="checkbox"><span>Reloj con caja</span></label>
@@ -83,8 +98,8 @@
     <section class="panel architecture">
       <span class="eyebrow">PRODUCTION PATH</span>
       <h3>Modo real</h3>
-      <div class="flow"><span>Phone / WhatsApp</span><b>→</b><span>AI Sales Agent</span><b>→</b><span>Catalog + Inventory</span><b>→</b><span>Order</span><b>→</b><span>Payment</span></div>
-      <p>Las credenciales de telefonía, IA, mensajería y pagos viven únicamente en backend. El frontend nunca recibe secretos y el agente sólo ejecuta herramientas permitidas.</p>
+      <div class="flow"><span>Phone / WhatsApp</span><b>→</b><span>AI Sales Agent</span><b>→</b><span>Central Inventory</span><b>→</b><span>Order</span><b>→</b><span>Stripe</span><b>→</b><span>SMS / WhatsApp</span></div>
+      <p>Las credenciales de telefonía, IA, mensajería y pagos viven únicamente en backend. El frontend usa un token de sesión y el stock se reserva atómicamente antes de generar cobro.</p>
     </section>
   </main>
   <div class="toast" id="voiceToast" role="status" aria-live="polite"></div>
