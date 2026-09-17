@@ -6,7 +6,15 @@ const env=(name:string)=>Deno.env.get(name)||'';
 function secretKey(){const modern=env('SUPABASE_SECRET_KEYS');if(modern){try{return JSON.parse(modern).default||''}catch{}}return env('SUPABASE_SERVICE_ROLE_KEY')}
 const supabase=createClient(env('SUPABASE_URL'),secretKey(),{auth:{persistSession:false,autoRefreshToken:false}});
 const workspaceOf=(req:Request)=>String(req.headers.get('x-kelo-workspace')||'default').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,64)||'default';
-function authorized(req:Request){const expected=env('KELO_ADMIN_TOKEN');if(!expected)return false;const supplied=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'');return supplied.length===expected.length&&supplied===expected}
+
+async function authorize(req:Request){
+  const supplied=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'').trim();if(!supplied)return {ok:false,mode:'none'};
+  const legacy=env('KELO_ADMIN_TOKEN');if(legacy&&supplied.length===legacy.length&&supplied===legacy)return {ok:true,mode:'legacy-token',role:'admin'};
+  const {data,error}=await supabase.auth.getUser(supplied);const user=data?.user;if(error||!user)return {ok:false,mode:'supabase',reason:'invalid_session'};
+  const {data:admin,error:adminError}=await supabase.from('kelo_admins').select('role,active').eq('user_id',user.id).eq('active',true).maybeSingle();
+  if(adminError||!admin)return {ok:false,mode:'supabase',reason:'not_approved',userId:user.id};
+  return {ok:true,mode:'supabase',userId:user.id,role:admin.role||'operator'};
+}
 async function audit(workspace:string,event_type:string,payload:Record<string,unknown>={},object_type?:string,object_id?:string){await supabase.from('kelo_audit').insert({workspace,event_type,payload,object_type:object_type||null,object_id:object_id||null})}
 
 async function materializeOrders(workspace:string,state:any){
@@ -54,10 +62,15 @@ async function reserveInventory(workspace:string,body:any){const vertical=String
 
 async function health(){
   const {count,error}=await supabase.from('kelo_catalog').select('*',{count:'exact',head:true}).eq('workspace','default');
-  return json({ok:!error,service:'kelo-api',database:{connected:!error,catalogItems:error?null:count},providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},auth:{adminTokenConfigured:!!env('KELO_ADMIN_TOKEN')},time:new Date().toISOString()},error?503:200);
+  return json({ok:!error,service:'kelo-api',database:{connected:!error,catalogItems:error?null:count},providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},auth:{supabase:true,legacyAdminTokenConfigured:!!env('KELO_ADMIN_TOKEN')},time:new Date().toISOString()},error?503:200);
 }
 
 Deno.serve(async(req:Request)=>{
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});const url=new URL(req.url),path=url.pathname.replace(/^.*\/kelo-api/,'')||'/',workspace=workspaceOf(req);
-  try{if(path==='/health')return await health();if(!authorized(req))return json({error:'unauthorized'},401);if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/catalog'&&['GET','PUT'].includes(req.method))return await catalogRoute(req,workspace,url);if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404)}catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
+  try{
+    if(path==='/health')return await health();
+    const auth=await authorize(req);if(!auth.ok)return json({error:'unauthorized',reason:auth.reason||'authentication_required'},401);
+    if(path==='/auth/me'&&req.method==='GET')return json({ok:true,mode:auth.mode,role:auth.role||'operator',userId:auth.userId||null});
+    if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/catalog'&&['GET','PUT'].includes(req.method))return await catalogRoute(req,workspace,url);if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404)
+  }catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
 });
