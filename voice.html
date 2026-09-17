@@ -7,57 +7,71 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
-  <meta name="description" content="Kelo Voice — agente de voz y automatización de llamadas para Kelo Associates.">
+  <meta name="description" content="Kelo Voice Retail — ventas automatizadas para relojes, ropa Zara y aretes de moissanita.">
   <link rel="stylesheet" href="auth.css">
   <link rel="stylesheet" href="voice.css">
-  <title>Kelo Voice · Kelo Associates</title>
+  <title>Kelo Voice Retail · Kelo Associates</title>
 </head>
 <body>
   <main class="voice-app">
     <header class="voice-topbar">
       <a class="back" href="index.html" aria-label="Volver a Kelo Associates">‹</a>
-      <div class="titleblock"><span class="eyebrow">Kelo Associates</span><h1>Kelo Voice</h1></div>
+      <div class="titleblock"><span class="eyebrow">Kelo Associates</span><h1>Kelo Voice Retail</h1></div>
       <span class="live-pill" id="modePill">DEMO</span>
     </header>
 
     <section class="hero-card">
       <div class="hero-copy">
-        <span class="eyebrow">AI CALL OPERATOR</span>
-        <h2>El teléfono ya forma parte del CRM.</h2>
-        <p>Califica leads, agenda citas, prepara SMS y deja cada acción registrada. El modo real queda bloqueado hasta conectar un backend seguro.</p>
+        <span class="eyebrow">3 NEGOCIOS · 1 SALES ENGINE</span>
+        <h2>Relojes. Zara. Moissanita.</h2>
+        <p>La IA investiga el contexto de cada negocio, consulta catálogo/stock, calcula el precio correcto, crea el pedido y prepara el siguiente paso sin inventar información.</p>
       </div>
       <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="provider-row" id="providerRow"></div>
     </section>
 
-    <section class="kpi-grid" id="voiceKpis" aria-label="Métricas de voz"></section>
+    <section class="panel">
+      <div class="section-head"><div><span class="eyebrow">CURRENT FOCUS</span><h3>Negocios activos</h3></div><span class="safe-badge">3 VERTICALES</span></div>
+      <div id="businessFocus" class="business-focus"></div>
+    </section>
+
+    <section class="kpi-grid" id="voiceKpis" aria-label="Métricas de ventas por voz"></section>
 
     <section class="panel live-panel">
-      <div class="section-head"><div><span class="eyebrow">TEST HARNESS</span><h3>Simular llamada</h3></div><span class="safe-badge">Sin llamada real</span></div>
-      <p class="hint">Ejecuta el flujo completo contra el mismo estado local del CRM: cliente → scoring → cita/follow-up → SMS preparado → timeline.</p>
+      <div class="section-head"><div><span class="eyebrow">SALES TEST HARNESS</span><h3>Simular conversación de venta</h3></div><span class="safe-badge">Sin llamada real</span></div>
+      <p class="hint">Prueba el pipeline: cliente → intención de compra → catálogo → precio → stock → pedido → pago/SMS preparado → CRM.</p>
       <form id="voiceDemoForm" class="voice-form">
         <div class="split">
           <label>Nombre<input name="name" value="Maria Rodriguez" autocomplete="off"></label>
           <label>Teléfono<input name="phone" value="+1 917 555 0188" inputmode="tel" required></label>
         </div>
         <div class="split">
-          <label>Vertical<select name="vertical"><option value="bathroom">Bathroom Remodeling</option><option value="kitchen">Kitchen Remodeling</option><option value="roofing">Roofing</option><option value="watches">Watches</option><option value="autos">Autos</option></select></label>
+          <label>Negocio<select name="vertical"><option value="watches">Relojes</option><option value="zara">Ropa Zara</option><option value="moissanite">Aretes de moissanita</option></select></label>
           <label>Idioma<select name="language"><option value="auto">Auto</option><option value="en">English</option><option value="es">Español</option></select></label>
         </div>
-        <label>Proyecto<input name="projectType" value="Full bathroom remodel" autocomplete="off"></label>
+        <label>Producto / lo que pide<input name="product" value="Reloj" autocomplete="off" placeholder="Reloj negro, vestido, aretes 1ct..."></label>
+        <label>Variante exacta<input name="variantKey" value="default" autocomplete="off" placeholder="estilo · talla · color · tamaño · metal"></label>
         <div class="split thirds">
-          <label>Budget<input name="budget" type="number" min="0" value="18000" inputmode="numeric"></label>
-          <label>Días para empezar<input name="timelineDays" type="number" min="0" value="21" inputmode="numeric"></label>
-          <label>ZIP<input name="zip" value="10312" inputmode="numeric"></label>
+          <label>Cantidad<input name="quantity" type="number" min="1" value="1" inputmode="numeric"></label>
+          <label>Entrega<select name="fulfillment"><option value="pickup">Pickup</option><option value="delivery">Delivery</option></select></label>
+          <label>Precio manual <input name="manualUnitPrice" type="number" min="0" step="1" inputmode="decimal" placeholder="Solo moissanita"></label>
         </div>
-        <label class="check"><input name="homeowner" type="checkbox" checked><span>Es homeowner</span></label>
-        <button class="run" type="submit"><span>▶</span> Ejecutar Kelo Voice V1</button>
+        <div class="split">
+          <label>Stock disponible<input name="stockAvailable" type="number" min="0" value="5" inputmode="numeric"></label>
+          <div class="check-stack">
+            <label class="check"><input name="stockConfirmed" type="checkbox" checked><span>Stock confirmado</span></label>
+            <label class="check"><input name="readyToBuy" type="checkbox" checked><span>Cliente listo para comprar</span></label>
+            <label class="check"><input name="variantComplete" type="checkbox" checked><span>Variante ya definida</span></label>
+            <label class="check"><input name="withBox" type="checkbox"><span>Reloj con caja</span></label>
+          </div>
+        </div>
+        <button class="run" type="submit"><span>▶</span> Ejecutar venta automática</button>
       </form>
       <div id="runResult" class="run-result" hidden></div>
     </section>
 
     <section class="panel">
-      <div class="section-head"><div><span class="eyebrow">CALL LOG</span><h3>Llamadas recientes</h3></div><button class="text-btn" id="refreshVoice" type="button">Actualizar</button></div>
+      <div class="section-head"><div><span class="eyebrow">CALL / SALES LOG</span><h3>Conversaciones recientes</h3></div><button class="text-btn" id="refreshVoice" type="button">Actualizar</button></div>
       <div id="callList" class="call-list"></div>
     </section>
 
@@ -69,8 +83,8 @@
     <section class="panel architecture">
       <span class="eyebrow">PRODUCTION PATH</span>
       <h3>Modo real</h3>
-      <div class="flow"><span>Phone</span><b>→</b><span>Telephony</span><b>→</b><span>Realtime Voice</span><b>→</b><span>Kelo Tool Router</span><b>→</b><span>CRM</span></div>
-      <p>La web nunca recibirá secretos de Twilio/OpenAI. Las llamadas reales deben entrar por un gateway backend con validación de firma, WebSocket bidireccional y herramientas allowlisted.</p>
+      <div class="flow"><span>Phone / WhatsApp</span><b>→</b><span>AI Sales Agent</span><b>→</b><span>Catalog + Inventory</span><b>→</b><span>Order</span><b>→</b><span>Payment</span></div>
+      <p>Las credenciales de telefonía, IA, mensajería y pagos viven únicamente en backend. El frontend nunca recibe secretos y el agente sólo ejecuta herramientas permitidas.</p>
     </section>
   </main>
   <div class="toast" id="voiceToast" role="status" aria-live="polite"></div>

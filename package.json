@@ -1,10 +1,10 @@
 {
   "name":"kelo-associates",
   "private":true,
-  "version":"0.3.0",
+  "version":"0.4.0",
   "type":"module",
   "scripts":{
-    "check":"node --check app.js && node --check data.js && node --check integrations.js && node --check auth.js && node --check organizer.js && node --check updater.js && node --check service-worker.js && node --check voice-core.js && node --check voice.js",
-    "test":"node tests/state-smoke.js && node tests/dom-contract.js && node tests/voice-smoke.js"
+    "check":"node --check app.js && node --check data.js && node --check integrations.js && node --check auth.js && node --check organizer.js && node --check updater.js && node --check service-worker.js && node --check retail-engine.js && node --check voice-core.js && node --check voice.js",
+    "test":"node tests/state-smoke.js && node tests/dom-contract.js && node tests/voice-smoke.js && node tests/retail-smoke.js"
   }
 }
