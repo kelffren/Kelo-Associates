@@ -1,17 +1,21 @@
 const CONFIG_KEY='kelo-backend-config-v1';
 const TOKEN_KEY='kelo-backend-token-v1';
+const DEFAULT_ENDPOINT='https://rrlrbvhbepcdsjmhrpeb.supabase.co/functions/v1/kelo-api';
 
 const hasLocal=()=>typeof localStorage!=='undefined';
 const hasSession=()=>typeof sessionStorage!=='undefined';
 const cleanUrl=value=>String(value||'').trim().replace(/\/+$/,'');
 
 export function getBackendConfig(){
-  if(!hasLocal())return {endpoint:'',workspace:'default'};
-  try{return {...{endpoint:'',workspace:'default'},...JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}')}}catch{return {endpoint:'',workspace:'default'}}
+  if(!hasLocal())return {endpoint:DEFAULT_ENDPOINT,workspace:'default'};
+  try{
+    const saved=JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}');
+    return {endpoint:cleanUrl(saved.endpoint)||DEFAULT_ENDPOINT,workspace:String(saved.workspace||'default').trim()||'default'};
+  }catch{return {endpoint:DEFAULT_ENDPOINT,workspace:'default'}}
 }
 
 export function configureBackend({endpoint,workspace='default',token=''}={}){
-  const url=cleanUrl(endpoint);if(!url)throw new Error('Backend endpoint requerido');
+  const url=cleanUrl(endpoint)||DEFAULT_ENDPOINT;
   if(hasLocal())localStorage.setItem(CONFIG_KEY,JSON.stringify({endpoint:url,workspace:String(workspace||'default').trim()||'default'}));
   if(token&&hasSession())sessionStorage.setItem(TOKEN_KEY,String(token));
   return getBackendStatus();
@@ -49,4 +53,4 @@ export const backendApi={
   reserveInventory:({vertical,sku,variantKey='default',quantity})=>request('/inventory/reserve',{method:'POST',body:{vertical,sku,variantKey,quantity}})
 };
 
-export {CONFIG_KEY,TOKEN_KEY};
+export {CONFIG_KEY,TOKEN_KEY,DEFAULT_ENDPOINT};
