@@ -35,6 +35,20 @@
       <div id="businessFocus" class="business-focus"></div>
     </section>
 
+    <section class="panel">
+      <div class="section-head"><div><span class="eyebrow">CENTRAL INVENTORY</span><h3>Stock real</h3></div><span class="safe-badge">Autoritativo</span></div>
+      <p class="hint">Cuando el backend esté conectado, este stock manda. El Sales Engine no genera cobro si la variante no está registrada o no quedan unidades.</p>
+      <form id="centralInventoryForm" class="voice-form">
+        <div class="split thirds">
+          <label>Negocio<select name="vertical"><option value="watches">Relojes</option><option value="zara">Ropa Zara</option><option value="moissanite">Moissanita</option></select></label>
+          <label>Variante<input name="variantKey" value="default" autocomplete="off" placeholder="panda|box · M|black · 1ct|silver"></label>
+          <label>Cantidad real<input name="quantity" type="number" min="0" value="0" inputmode="numeric"></label>
+        </div>
+        <div class="split"><label>SKU<input id="centralSku" readonly value="WATCH-CORE"></label><div class="inventory-actions"><button class="secondary wide" id="inventoryLookup" type="button">Consultar</button><button class="run" type="submit">Guardar stock</button></div></div>
+      </form>
+      <div id="inventoryResult" class="run-result" hidden></div>
+    </section>
+
     <section class="kpi-grid" id="voiceKpis" aria-label="Métricas de ventas por voz"></section>
 
     <section class="panel live-panel">
