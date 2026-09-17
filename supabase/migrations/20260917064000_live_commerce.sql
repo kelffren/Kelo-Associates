@@ -67,5 +67,44 @@ alter table public.kelo_orders enable row level security;
 alter table public.kelo_messages enable row level security;
 alter table public.kelo_audit enable row level security;
 
+create or replace function public.kelo_reserve_inventory(
+  p_workspace text,
+  p_vertical text,
+  p_sku text,
+  p_variant_key text,
+  p_quantity integer
+)
+returns table(reserved boolean,status text,remaining integer)
+language plpgsql
+security definer
+set search_path=public
+as $$
+declare current_qty integer;
+begin
+  if p_quantity is null or p_quantity <= 0 then
+    return query select false,'invalid_quantity'::text,null::integer;
+    return;
+  end if;
+  select quantity into current_qty from public.kelo_inventory
+    where workspace=p_workspace and vertical=p_vertical and sku=p_sku and variant_key=coalesce(nullif(p_variant_key,''),'default')
+    for update;
+  if not found then
+    return query select false,'needs_stock_confirmation'::text,null::integer;
+    return;
+  end if;
+  if current_qty < p_quantity then
+    return query select false,'insufficient_stock'::text,current_qty;
+    return;
+  end if;
+  update public.kelo_inventory set quantity=quantity-p_quantity,updated_at=now()
+    where workspace=p_workspace and vertical=p_vertical and sku=p_sku and variant_key=coalesce(nullif(p_variant_key,''),'default')
+    returning quantity into current_qty;
+  return query select true,'reserved'::text,current_qty;
+end;
+$$;
+
+revoke all on function public.kelo_reserve_inventory(text,text,text,text,integer) from public,anon,authenticated;
+grant execute on function public.kelo_reserve_inventory(text,text,text,text,integer) to service_role;
+
 -- Deliberately no public RLS policies. The Edge Functions use a secret server-side key.
 -- Browser clients never receive database secret keys and cannot query these tables directly.
