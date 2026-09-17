@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06070a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="Kelo Voice — agente de voz y automatización de llamadas para Kelo Associates.">
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="voice.css">
+  <title>Kelo Voice · Kelo Associates</title>
+</head>
+<body>
+  <main class="voice-app">
+    <header class="voice-topbar">
+      <a class="back" href="index.html" aria-label="Volver a Kelo Associates">‹</a>
+      <div class="titleblock"><span class="eyebrow">Kelo Associates</span><h1>Kelo Voice</h1></div>
+      <span class="live-pill" id="modePill">DEMO</span>
+    </header>
+
+    <section class="hero-card">
+      <div class="hero-copy">
+        <span class="eyebrow">AI CALL OPERATOR</span>
+        <h2>El teléfono ya forma parte del CRM.</h2>
+        <p>Califica leads, agenda citas, prepara SMS y deja cada acción registrada. El modo real queda bloqueado hasta conectar un backend seguro.</p>
+      </div>
+      <div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="provider-row" id="providerRow"></div>
+    </section>
+
+    <section class="kpi-grid" id="voiceKpis" aria-label="Métricas de voz"></section>
+
+    <section class="panel live-panel">
+      <div class="section-head"><div><span class="eyebrow">TEST HARNESS</span><h3>Simular llamada</h3></div><span class="safe-badge">Sin llamada real</span></div>
+      <p class="hint">Ejecuta el flujo completo contra el mismo estado local del CRM: cliente → scoring → cita/follow-up → SMS preparado → timeline.</p>
+      <form id="voiceDemoForm" class="voice-form">
+        <div class="split">
+          <label>Nombre<input name="name" value="Maria Rodriguez" autocomplete="off"></label>
+          <label>Teléfono<input name="phone" value="+1 917 555 0188" inputmode="tel" required></label>
+        </div>
+        <div class="split">
+          <label>Vertical<select name="vertical"><option value="bathroom">Bathroom Remodeling</option><option value="kitchen">Kitchen Remodeling</option><option value="roofing">Roofing</option><option value="watches">Watches</option><option value="autos">Autos</option></select></label>
+          <label>Idioma<select name="language"><option value="auto">Auto</option><option value="en">English</option><option value="es">Español</option></select></label>
+        </div>
+        <label>Proyecto<input name="projectType" value="Full bathroom remodel" autocomplete="off"></label>
+        <div class="split thirds">
+          <label>Budget<input name="budget" type="number" min="0" value="18000" inputmode="numeric"></label>
+          <label>Días para empezar<input name="timelineDays" type="number" min="0" value="21" inputmode="numeric"></label>
+          <label>ZIP<input name="zip" value="10312" inputmode="numeric"></label>
+        </div>
+        <label class="check"><input name="homeowner" type="checkbox" checked><span>Es homeowner</span></label>
+        <button class="run" type="submit"><span>▶</span> Ejecutar Kelo Voice V1</button>
+      </form>
+      <div id="runResult" class="run-result" hidden></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><span class="eyebrow">CALL LOG</span><h3>Llamadas recientes</h3></div><button class="text-btn" id="refreshVoice" type="button">Actualizar</button></div>
+      <div id="callList" class="call-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><span class="eyebrow">TOOL BUS</span><h3>Acciones del agente</h3></div><span class="safe-badge">Auditable</span></div>
+      <div id="actionList" class="action-list"></div>
+    </section>
+
+    <section class="panel architecture">
+      <span class="eyebrow">PRODUCTION PATH</span>
+      <h3>Modo real</h3>
+      <div class="flow"><span>Phone</span><b>→</b><span>Telephony</span><b>→</b><span>Realtime Voice</span><b>→</b><span>Kelo Tool Router</span><b>→</b><span>CRM</span></div>
+      <p>La web nunca recibirá secretos de Twilio/OpenAI. Las llamadas reales deben entrar por un gateway backend con validación de firma, WebSocket bidireccional y herramientas allowlisted.</p>
+    </section>
+  </main>
+  <div class="toast" id="voiceToast" role="status" aria-live="polite"></div>
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="voice.js"></script>
+</body>
+</html>
