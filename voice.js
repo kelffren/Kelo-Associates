@@ -1,22 +1,29 @@
 import {seedState} from './data.js';
 import {ensureVoiceState,loadKeloState,saveKeloState,runDemoRetailSale,getVoiceMetrics,CURRENT_VERTICALS} from './voice-core.js';
-import {getVerticalProfile} from './retail-engine.js';
+import {getVerticalProfile,getCatalog,setTrackedInventory} from './retail-engine.js';
+import {backendApi,getBackendStatus} from './backend-client.js';
+import {bootRemoteSync,syncNow} from './remote-sync.js';
 
 const $=(s,r=document)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0));
 let state=ensureVoiceState(loadKeloState()||seedState());
-let toastTimer;
+let toastTimer;let liveHealth=null;
 
-function toast(text){const el=$('#voiceToast');el.textContent=text;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2000)}
+function toast(text){const el=$('#voiceToast');el.textContent=text;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2400)}
 function fmtTime(value){return new Date(value).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
 function fmtDate(value){return new Date(value).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
 function providerLabel(value){return value==='connected'?'LIVE':value==='backend-required'?'BACKEND':'OFF'}
 
+async function refreshLiveHealth(){
+  if(!getBackendStatus().ready){liveHealth=null;state.voice.mode='demo';return null}
+  try{liveHealth=await backendApi.health();state.voice.mode='live';state.voice.provider.sms=liveHealth?.providers?.twilio?'connected':'backend-required';state.voice.provider.payments=liveHealth?.providers?.stripe?'connected':'backend-required';return liveHealth}catch{liveHealth=null;state.voice.mode='demo';return null}
+}
+
 function renderProviders(){
-  const labels={telephony:'Telephony',realtime:'Realtime AI',sms:'SMS',payments:'Payments'};
+  const labels={telephony:'Telephony',realtime:'Realtime AI',sms:'SMS / WhatsApp',payments:'Payments'};
   $('#providerRow').innerHTML=Object.entries(state.voice.provider).map(([key,value])=>`<span class="provider-chip"><strong>${esc(labels[key]||key)}</strong> · ${esc(providerLabel(value))}</span>`).join('');
-  $('#modePill').textContent=state.voice.mode==='live'?'LIVE':'DEMO';
+  $('#modePill').textContent=getBackendStatus().ready?'LIVE DATA':'DEMO';
 }
 
 function renderBusinessFocus(){
@@ -30,41 +37,59 @@ function renderKpis(){
 
 function renderCalls(){
   const rows=state.voice.calls.slice(0,12);
-  $('#callList').innerHTML=rows.length?rows.map(call=>{const score=Number(call.leadScore||0);const hot=score>=state.voice.settings.minimumRetailHotScore;return `<article class="call"><div class="call-icon">${call.direction==='outbound'?'↗':'↘'}</div><div><h4>${esc(call.name||call.phone||'Caller')}</h4><p>${esc(call.summary||call.vertical||'Retail call')} · ${fmtDate(call.startedAt)} ${fmtTime(call.startedAt)}</p></div><span class="call-score ${hot?'hot':''}">${call.leadScore==null?'—':score+'/100'}</span></article>`}).join(''):'<div class="empty">Todavía no hay conversaciones. Ejecuta la simulación para probar el pipeline.</div>';
+  $('#callList').innerHTML=rows.length?rows.map(call=>{const score=Number(call.leadScore||0);const hot=score>=state.voice.settings.minimumRetailHotScore;return `<article class="call"><div class="call-icon">${call.direction==='outbound'?'↗':'↘'}</div><div><h4>${esc(call.name||call.phone||'Caller')}</h4><p>${esc(call.summary||call.vertical||'Retail call')} · ${fmtDate(call.startedAt)} ${fmtTime(call.startedAt)}</p></div><span class="call-score ${hot?'hot':''}">${call.leadScore==null?'—':score+'/100'}</span></article>`}).join(''):'<div class="empty">Todavía no hay conversaciones. Ejecuta una venta para probar el pipeline.</div>';
 }
 
 function renderActions(){
-  const icons={tool:'⌘',external_stub:'↗',call:'◉',handoff:'⇄'};const rows=state.voice.actions.slice(0,22);
-  $('#actionList').innerHTML=rows.length?rows.map(a=>`<article class="action"><div class="action-icon">${icons[a.type]||'•'}</div><div><h4>${esc(a.label)}</h4><p>${esc(a.type)} · ${fmtTime(a.createdAt)}</p></div><span class="safe-badge">${a.type==='external_stub'?'STUB':'OK'}</span></article>`).join(''):'<div class="empty">El Tool Bus está listo. Catálogo, precio, stock, pedido y pagos quedarán auditados aquí.</div>';
+  const icons={tool:'⌘',external_stub:'↗',external_live:'✓',call:'◉',handoff:'⇄'};const rows=state.voice.actions.slice(0,22);
+  $('#actionList').innerHTML=rows.length?rows.map(a=>`<article class="action"><div class="action-icon">${icons[a.type]||'•'}</div><div><h4>${esc(a.label)}</h4><p>${esc(a.type)} · ${fmtTime(a.createdAt)}</p></div><span class="safe-badge">${a.type==='external_stub'?'STUB':a.type==='external_live'?'LIVE':'OK'}</span></article>`).join(''):'<div class="empty">El Tool Bus está listo. Catálogo, precio, stock, pedido y pagos quedarán auditados aquí.</div>';
 }
-
 function render(){renderProviders();renderBusinessFocus();renderKpis();renderCalls();renderActions()}
 
 function setDefaultsForVertical(vertical){
-  const form=$('#voiceDemoForm');const product=form.elements.product;const qty=form.elements.quantity;const stock=form.elements.stockAvailable;const manual=form.elements.manualUnitPrice;const box=form.elements.withBox;
+  const form=$('#voiceDemoForm'),product=form.elements.product,qty=form.elements.quantity,stock=form.elements.stockAvailable,manual=form.elements.manualUnitPrice,box=form.elements.withBox;
   if(vertical==='watches'){product.value='Reloj';qty.value='1';stock.value='5';manual.value='';box.disabled=false}
   if(vertical==='zara'){product.value='Prenda Zara';qty.value='28';stock.value='100';manual.value='';box.checked=false;box.disabled=true}
   if(vertical==='moissanite'){product.value='Aretes de moissanita';qty.value='1';stock.value='10';manual.value='';box.checked=false;box.disabled=true}
 }
-
 $('#voiceDemoForm').elements.vertical.addEventListener('change',event=>setDefaultsForVertical(event.target.value));
 
-$('#voiceDemoForm').addEventListener('submit',event=>{
-  event.preventDefault();const fd=new FormData(event.currentTarget);const manualRaw=String(fd.get('manualUnitPrice')||'').trim();
-  const input={
-    name:String(fd.get('name')||'Caller').trim(),phone:String(fd.get('phone')||'').trim(),vertical:String(fd.get('vertical')||'watches'),language:String(fd.get('language')||'auto'),product:String(fd.get('product')||'').trim(),variantKey:String(fd.get('variantKey')||'default').trim()||'default',quantity:Math.max(1,Number(fd.get('quantity')||1)),fulfillment:String(fd.get('fulfillment')||'pickup'),manualUnitPrice:manualRaw===''?null:Number(manualRaw),stockAvailable:Math.max(0,Number(fd.get('stockAvailable')||0)),stockConfirmed:fd.get('stockConfirmed')==='on',readyToBuy:fd.get('readyToBuy')==='on',variantComplete:fd.get('variantComplete')==='on',withBox:fd.get('withBox')==='on',direction:'inbound'
-  };
+function logLiveAction(callId,label,payload={}){state.voice.actions.unshift({id:`va_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,7)}`,callId,type:'external_live',label,payload,createdAt:new Date().toISOString()})}
+function checkoutUrls(){const base=`${location.origin}${location.pathname.replace(/voice\.html$/,'')}`;return {successUrl:`${base}index.html?payment=success`,cancelUrl:`${base}voice.html?payment=cancelled`}}
+
+$('#voiceDemoForm').addEventListener('submit',async event=>{
+  event.preventDefault();const fd=new FormData(event.currentTarget),manualRaw=String(fd.get('manualUnitPrice')||'').trim();
+  const input={name:String(fd.get('name')||'Caller').trim(),phone:String(fd.get('phone')||'').trim(),vertical:String(fd.get('vertical')||'watches'),language:String(fd.get('language')||'auto'),product:String(fd.get('product')||'').trim(),variantKey:String(fd.get('variantKey')||'default').trim()||'default',quantity:Math.max(1,Number(fd.get('quantity')||1)),fulfillment:String(fd.get('fulfillment')||'pickup'),sendChannel:String(fd.get('sendChannel')||'sms'),manualUnitPrice:manualRaw===''?null:Number(manualRaw),stockAvailable:Math.max(0,Number(fd.get('stockAvailable')||0)),stockConfirmed:fd.get('stockConfirmed')==='on',readyToBuy:fd.get('readyToBuy')==='on',variantComplete:fd.get('variantComplete')==='on',withBox:fd.get('withBox')==='on',direction:'inbound'};
   if(!input.phone){toast('Necesito un teléfono');return}
+  const live=getBackendStatus().ready;const product=getCatalog(input.vertical)[0];let centralBefore=null;
   try{
-    const result=runDemoRetailSale(state,input);saveKeloState(state);const box=$('#runResult');box.hidden=false;
-    let status='Follow-up creado.';
+    if(live&&product){
+      centralBefore=await backendApi.getInventory({vertical:input.vertical,sku:product.sku,variantKey:input.variantKey});
+      if(Number.isFinite(Number(centralBefore?.quantity))){input.stockAvailable=Number(centralBefore.quantity);input.stockConfirmed=true}else{input.stockConfirmed=false}
+    }
+    const result=runDemoRetailSale(state,input);let status='Follow-up creado.';
     if(result.quote.needsManualPrice)status='Precio pendiente: se creó una tarea para revisión humana.';
-    else if(result.order?.status==='pending_payment')status=`Pedido ${result.order.id} creado por ${money(result.order.total)}. Pago/SMS preparados para backend.`;
     else if(result.order?.status==='needs_stock_confirmation')status='Pedido pendiente de confirmar stock; se creó tarea prioritaria.';
-    box.innerHTML=`<strong>${esc(result.playbook.label)} · ${result.qualification.temperature.toUpperCase()} · ${result.qualification.score}/100</strong><p>${esc(status)} ${result.actions.length} acciones auditadas.</p>`;render();toast('Pipeline de venta ejecutado');
-  }catch(error){toast(error?.message||'No se pudo ejecutar')}
+    else if(result.order?.status==='pending_payment')status=`Pedido ${result.order.id} creado por ${money(result.order.total)}. Pago preparado.`;
+
+    if(live&&result.order&&result.quote&&!result.quote.needsManualPrice){
+      const reserved=await backendApi.reserveInventory({vertical:result.order.vertical,sku:result.order.sku,variantKey:result.order.variantKey,quantity:result.order.quantity});
+      if(!reserved?.reserved){result.order.status='needs_stock_confirmation';result.order.reservationStatus=reserved?.status||'needs_stock_confirmation';status=reserved?.status==='insufficient_stock'?`Stock central insuficiente${reserved.remaining!==null?` · quedan ${reserved.remaining}`:''}. No se generó cobro.`:'Stock central no confirmado. No se generó cobro.';if(Number.isFinite(Number(reserved?.remaining)))setTrackedInventory(state,{vertical:result.order.vertical,sku:result.order.sku,variantKey:result.order.variantKey,quantity:Number(reserved.remaining)})}
+      else{
+        result.order.reservationStatus='reserved';if(Number.isFinite(Number(reserved.remaining)))setTrackedInventory(state,{vertical:result.order.vertical,sku:result.order.sku,variantKey:result.order.variantKey,quantity:Number(reserved.remaining)});logLiveAction(result.call.id,'Stock reservado en backend',{orderId:result.order.id,remaining:reserved.remaining});
+        const urls=checkoutUrls();const payment=await backendApi.createPaymentLink({orderId:result.order.id,amount:result.order.total,description:`Kelo Associates · ${result.playbook.label}`,customerPhone:input.phone,...urls});result.order.paymentUrl=payment?.url||null;result.order.paymentProviderId=payment?.id||null;result.order.status=payment?.url?'payment_link_created':'pending_payment';logLiveAction(result.call.id,'Link de pago creado',{orderId:result.order.id,url:payment?.url||null});
+        if(payment?.url&&input.sendChannel!=='none'){
+          await backendApi.sendMessage({channel:input.sendChannel,to:input.phone,body:`Kelo Associates: tu pedido ${result.order.id} por ${money(result.order.total)} está listo. Paga aquí: ${payment.url}`});logLiveAction(result.call.id,`${input.sendChannel==='whatsapp'?'WhatsApp':'SMS'} enviado`,{orderId:result.order.id,to:input.phone});status=`LIVE · pedido ${result.order.id} · ${money(result.order.total)} · link de pago enviado por ${input.sendChannel==='whatsapp'?'WhatsApp':'SMS'}.`;
+        }else if(payment?.url)status=`LIVE · pedido ${result.order.id} · link de pago creado.`;
+      }
+    }else if(result.order?.status==='pending_payment')status+= live?'':' Backend aún no conectado: no se envió nada real.';
+
+    saveKeloState(state);if(live)await syncNow().catch(()=>{});const box=$('#runResult');box.hidden=false;box.innerHTML=`<strong>${esc(result.playbook.label)} · ${result.qualification.temperature.toUpperCase()} · ${result.qualification.score}/100</strong><p>${esc(status)} ${result.actions.length} acciones internas auditadas.</p>`;await refreshLiveHealth();render();toast(live?'Pipeline LIVE ejecutado':'Pipeline demo ejecutado');
+  }catch(error){saveKeloState(state);render();toast(error?.message||'No se pudo ejecutar')}
 });
 
-$('#refreshVoice').addEventListener('click',()=>{state=ensureVoiceState(loadKeloState()||state);render();toast('Actualizado')});
+$('#refreshVoice').addEventListener('click',async()=>{state=ensureVoiceState(loadKeloState()||state);await refreshLiveHealth();render();toast('Actualizado')});
 window.addEventListener('storage',()=>{state=ensureVoiceState(loadKeloState()||state);render()});
-render();
+
+async function boot(){render();await bootRemoteSync();state=ensureVoiceState(loadKeloState()||state);await refreshLiveHealth();render()}
+boot();
