@@ -42,10 +42,16 @@ async function request(path,{method='GET',body,signal,timeoutMs=12000,auth=true}
   }finally{clearTimeout(timer)}
 }
 
+const catalogQuery=({vertical='',sku=''}={})=>{
+  const params=new URLSearchParams();if(vertical)params.set('vertical',vertical);if(sku)params.set('sku',sku);const query=params.toString();return `/catalog${query?`?${query}`:''}`;
+};
+
 export const backendApi={
   health:()=>request('/health',{auth:false,timeoutMs:5000}),
   getState:()=>request('/state'),
   putState:(state,expectedRevision=0)=>request('/state',{method:'PUT',body:{state,expectedRevision}}),
+  getCatalog:(filters={})=>request(catalogQuery(filters)),
+  setCatalogItem:({vertical,sku,name,active=true,pricing={},attributes={}})=>request('/catalog',{method:'PUT',body:{vertical,sku,name,active,pricing,attributes}}),
   sendMessage:({channel,to,body,mediaUrl=null})=>request('/messages/send',{method:'POST',body:{channel,to,body,mediaUrl}}),
   createPaymentLink:({orderId,amount,currency='usd',description,customerPhone,successUrl,cancelUrl})=>request('/payments/create',{method:'POST',body:{orderId,amount,currency,description,customerPhone,successUrl,cancelUrl}}),
   getInventory:({vertical,sku,variantKey='default'})=>request(`/inventory?vertical=${encodeURIComponent(vertical)}&sku=${encodeURIComponent(sku)}&variantKey=${encodeURIComponent(variantKey)}`),
