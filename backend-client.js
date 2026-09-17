@@ -45,7 +45,8 @@ export const backendApi={
   sendMessage:({channel,to,body,mediaUrl=null})=>request('/messages/send',{method:'POST',body:{channel,to,body,mediaUrl}}),
   createPaymentLink:({orderId,amount,currency='usd',description,customerPhone,successUrl,cancelUrl})=>request('/payments/create',{method:'POST',body:{orderId,amount,currency,description,customerPhone,successUrl,cancelUrl}}),
   getInventory:({vertical,sku,variantKey='default'})=>request(`/inventory?vertical=${encodeURIComponent(vertical)}&sku=${encodeURIComponent(sku)}&variantKey=${encodeURIComponent(variantKey)}`),
-  setInventory:({vertical,sku,variantKey='default',quantity})=>request('/inventory',{method:'PUT',body:{vertical,sku,variantKey,quantity}})
+  setInventory:({vertical,sku,variantKey='default',quantity})=>request('/inventory',{method:'PUT',body:{vertical,sku,variantKey,quantity}}),
+  reserveInventory:({vertical,sku,variantKey='default',quantity})=>request('/inventory/reserve',{method:'POST',body:{vertical,sku,variantKey,quantity}})
 };
 
 export {CONFIG_KEY,TOKEN_KEY};
