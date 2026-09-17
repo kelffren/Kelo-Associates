@@ -1,6 +1,6 @@
 import {createClient} from 'npm:@supabase/supabase-js@2';
 
-const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, content-type, x-kelo-workspace','Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'};
+const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, apikey, content-type, x-kelo-workspace','Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json'}});
 const env=(name:string)=>Deno.env.get(name)||'';
 function secretKey(){const modern=env('SUPABASE_SECRET_KEYS');if(modern){try{return JSON.parse(modern).default||''}catch{}}return env('SUPABASE_SERVICE_ROLE_KEY')}
@@ -30,13 +30,34 @@ async function createPayment(workspace:string,body:any){
   const res=await fetch('https://api.stripe.com/v1/checkout/sessions',{method:'POST',headers:{Authorization:`Bearer ${secret}`,'Content-Type':'application/x-www-form-urlencoded'},body:params});const data=await res.json();if(res.ok){await supabase.from('kelo_orders').update({payment_provider_id:data.id,payment_url:data.url,status:'payment_link_created',updated_at:new Date().toISOString()}).eq('workspace',workspace).eq('id',orderId);await audit(workspace,'payment.link_created',{orderId,sessionId:data.id,url:data.url},'order',orderId)}return json(data,res.ok?200:res.status);
 }
 
+async function catalogRoute(req:Request,workspace:string,url:URL){
+  if(req.method==='GET'){
+    const vertical=String(url.searchParams.get('vertical')||'').trim(),sku=String(url.searchParams.get('sku')||'').trim();
+    let query=supabase.from('kelo_catalog').select('id,workspace,vertical,sku,name,active,pricing,attributes,updated_at').eq('workspace',workspace).order('vertical').order('name');
+    if(vertical)query=query.eq('vertical',vertical);if(sku)query=query.eq('sku',sku);
+    const {data,error}=await query;if(error)throw error;return json({items:data||[],count:data?.length||0});
+  }
+  const body=await req.json();const vertical=String(body?.vertical||'').trim(),sku=String(body?.sku||'').trim(),name=String(body?.name||'').trim();
+  if(!['watches','zara','moissanite'].includes(vertical)||!sku||!name)return json({error:'invalid_catalog_item'},400);
+  const pricing=body?.pricing&&typeof body.pricing==='object'&&!Array.isArray(body.pricing)?body.pricing:{};
+  const attributes=body?.attributes&&typeof body.attributes==='object'&&!Array.isArray(body.attributes)?body.attributes:{};
+  const record={workspace,vertical,sku,name,active:body?.active!==false,pricing,attributes,updated_at:new Date().toISOString()};
+  const {data,error}=await supabase.from('kelo_catalog').upsert(record,{onConflict:'workspace,vertical,sku'}).select().single();if(error)throw error;
+  await audit(workspace,'catalog.upsert',{vertical,sku,name,active:record.active},'catalog',`${vertical}:${sku}`);return json(data);
+}
+
 async function inventoryRoute(req:Request,workspace:string,url:URL){
   if(req.method==='GET'){const vertical=url.searchParams.get('vertical')||'',sku=url.searchParams.get('sku')||'',variant_key=url.searchParams.get('variantKey')||'default';const {data,error}=await supabase.from('kelo_inventory').select('*').eq('workspace',workspace).eq('vertical',vertical).eq('sku',sku).eq('variant_key',variant_key).maybeSingle();if(error)throw error;return json(data||{quantity:null,status:'not_tracked'})}
   const body=await req.json(),quantity=Math.floor(Number(body?.quantity));if(!Number.isFinite(quantity)||quantity<0)return json({error:'invalid_quantity'},400);const vertical=String(body?.vertical||''),sku=String(body?.sku||''),variant_key=String(body?.variantKey||'default');if(!['watches','zara','moissanite'].includes(vertical)||!sku)return json({error:'invalid_inventory_key'},400);const record={workspace,vertical,sku,variant_key,quantity,updated_at:new Date().toISOString()};const {data,error}=await supabase.from('kelo_inventory').upsert(record,{onConflict:'workspace,vertical,sku,variant_key'}).select().single();if(error)throw error;await audit(workspace,'inventory.set',{vertical,sku,variant_key,quantity},'inventory',`${vertical}:${sku}:${variant_key}`);return json(data);
 }
 async function reserveInventory(workspace:string,body:any){const vertical=String(body?.vertical||''),sku=String(body?.sku||''),variantKey=String(body?.variantKey||'default'),quantity=Math.floor(Number(body?.quantity||0));if(!['watches','zara','moissanite'].includes(vertical)||!sku||quantity<=0)return json({error:'invalid_reservation'},400);const {data,error}=await supabase.rpc('kelo_reserve_inventory',{p_workspace:workspace,p_vertical:vertical,p_sku:sku,p_variant_key:variantKey,p_quantity:quantity});if(error)throw error;const result=Array.isArray(data)?data[0]:data;await audit(workspace,'inventory.reserve',{vertical,sku,variantKey,quantity,...(result||{})},'inventory',`${vertical}:${sku}:${variantKey}`);return json(result||{reserved:false,status:'unknown',remaining:null})}
 
+async function health(){
+  const {count,error}=await supabase.from('kelo_catalog').select('*',{count:'exact',head:true}).eq('workspace','default');
+  return json({ok:!error,service:'kelo-api',database:{connected:!error,catalogItems:error?null:count},providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},auth:{adminTokenConfigured:!!env('KELO_ADMIN_TOKEN')},time:new Date().toISOString()},error?503:200);
+}
+
 Deno.serve(async(req:Request)=>{
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});const url=new URL(req.url),path=url.pathname.replace(/^.*\/kelo-api/,'')||'/',workspace=workspaceOf(req);
-  try{if(path==='/health')return json({ok:true,service:'kelo-api',providers:{twilio:!!(env('TWILIO_ACCOUNT_SID')&&env('TWILIO_AUTH_TOKEN')),stripe:!!env('STRIPE_SECRET_KEY')},time:new Date().toISOString()});if(!authorized(req))return json({error:'unauthorized'},401);if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404)}catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
+  try{if(path==='/health')return await health();if(!authorized(req))return json({error:'unauthorized'},401);if(path==='/state'&&req.method==='GET')return json(await getState(workspace));if(path==='/state'&&req.method==='PUT')return await putState(workspace,await req.json());if(path==='/catalog'&&['GET','PUT'].includes(req.method))return await catalogRoute(req,workspace,url);if(path==='/messages/send'&&req.method==='POST')return await sendTwilio(workspace,await req.json());if(path==='/payments/create'&&req.method==='POST')return await createPayment(workspace,await req.json());if(path==='/inventory/reserve'&&req.method==='POST')return await reserveInventory(workspace,await req.json());if(path==='/inventory'&&['GET','PUT'].includes(req.method))return await inventoryRoute(req,workspace,url);return json({error:'not_found',path},404)}catch(error){console.error(error);return json({error:'server_error',message:error instanceof Error?error.message:String(error)},500)}
 });
