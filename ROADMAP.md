@@ -655,3 +655,18 @@ Reglas: permitir múltiples conexiones del mismo proveedor; agregar/reemplazar s
 Roadmap: (1) dominio + Connection Manager/Inbox mock; (2) persistencia de connections/channels/identities/conversations/audit; (3) Meta oficial según capabilities reales; (4) WhatsApp multi-número oficial; (5) Identity Resolution y merge auditable; (6) operación: templates/follow-up/citas/envíos/métricas; (7) resiliencia: reauth, health checks, alertas, archivado y reemplazo.
 
 Criterio de éxito: cambiar una conexión externa no obliga a reconstruir clientes ni pierde historial comercial.
+
+
+## 22. Kelo Intelligence — supervisor horario + Analizar ahora
+
+Kelo Associates incorpora una capa de inteligencia por encima de todos los Inbox autorizados. Meta AI u otra IA puede seguir atendiendo cada canal; Kelo Intelligence observa las conversaciones normalizadas y prioriza intervención humana.
+
+Dos disparadores obligatorios: **scheduler backend cada hora** y botón móvil **ANALIZAR AHORA**. Ambos ejecutan exactamente el mismo pipeline.
+
+Salidas principales: `Attention Score`, `Money Opportunity Score`, `Priority Score`, razones legibles, acción recomendada y resumen por cuenta. La oportunidad monetaria es una priorización basada en señales, no una garantía de venta.
+
+Archivos: `KELO_INTELLIGENCE.md` (contrato/arquitectura) y `kelo-intelligence.js` (núcleo inicial provider/model agnostic).
+
+Roadmap de implementación: (1) Attention Center mock sobre datos actuales; (2) persistir signals/runs; (3) endpoint manual; (4) worker horario; (5) adapter OpenAI backend con salida estructurada; (6) attribution customer/human/meta_ai/kelo_ai; (7) push móvil con dedupe/cooldown/deep-link; (8) feedback del operador para calibrar scores con cierres reales; (9) métricas por cuenta y por IA; (10) recomendaciones de next-best-action basadas en resultados históricos.
+
+Principio: Kelo Intelligence supervisa y filtra. No necesita controlar la IA de Meta ni enviar mensajes para producir valor.
