@@ -326,3 +326,10 @@ Principio permanente: **ProviderConnection/Channel son reemplazables; Client y s
 `kelo-inbox-core.js` contiene el primer núcleo desacoplado para conexiones, channels, capabilities, identity resolution y merges auditables. Integrarlo progresivamente; no crear un segundo Inbox paralelo.
 
 Marketplace solo se considera integración de mensajería cuando exista acceso oficial y autorizado a esa capacidad. Si no, conservarlo como fuente/atribución CRM y marcarlo read-only/manual.
+
+
+## 17. Kelo Intelligence
+
+Antes de modificar IA/supervisión del Inbox leer `KELO_INTELLIGENCE.md`. El núcleo está en `kelo-intelligence.js`.
+
+Regla: análisis manual y análisis horario usan el mismo servicio backend. El navegador no es scheduler fiable. OpenAI es un adapter intercambiable y su API key nunca vive en frontend. Cada recomendación debe conservar score + reason codes + recommended action; no usar scores opacos como verdad. Attribution de mensajes debe distinguir customer/human/meta_ai/kelo_ai/other_ai.
