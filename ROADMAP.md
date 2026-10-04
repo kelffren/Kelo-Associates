@@ -638,3 +638,20 @@ Los costos deben permanecer separados para permitir después descubrir cuánto s
 - `daily-profit-ledger.css` aporta la UI especializada;
 - `ui-maturity.js` carga el módulo dentro de Operator sin acoplarlo a la lógica principal;
 - persistencia provisional mediante `localStorage` hasta que el backend real se convierta en fuente de verdad.
+
+
+## 21. Kelo Inbox — cuentas reemplazables e Inbox multicanal
+
+Problema real validado: una cuenta/canal puede estar funcionando hoy y no conviene arriesgarla con experimentos; al crecer pueden existir varias cuentas autorizadas y administrarlas por separado crea fricción. Además, una conexión puede perder autorización o ser reemplazada y el CRM no puede perder la memoria comercial.
+
+Decisión: **las cuentas externas son conectores reemplazables. El cliente, historial, citas, ventas y notas pertenecen a Kelo Associates.**
+
+Documento canónico: `KELO_INBOX_ARCHITECTURE.md`. Debe leerse antes de implementar cambios en Inbox, canales, Meta Hub, identidad o conversaciones. Núcleo inicial: `kelo-inbox-core.js`.
+
+Flujo: proveedores autorizados → ProviderConnections → Channels normalizados → Inbox unificado → Client global Kelo → citas/notas/oportunidades/ventas/timeline.
+
+Reglas: permitir múltiples conexiones del mismo proveedor; agregar/reemplazar sin reescribir la app; desconectar/archivar no borra historial; conservar attribution original; detectar duplicados y pedir confirmación sin identidad fuerte; nunca fusionar solo por nombre/avatar; responder solo con capability oficial; Marketplace puede ser fuente CRM aunque su inbox no sea accesible por API; no usar el sistema para evadir bloqueos; secretos solo en backend.
+
+Roadmap: (1) dominio + Connection Manager/Inbox mock; (2) persistencia de connections/channels/identities/conversations/audit; (3) Meta oficial según capabilities reales; (4) WhatsApp multi-número oficial; (5) Identity Resolution y merge auditable; (6) operación: templates/follow-up/citas/envíos/métricas; (7) resiliencia: reauth, health checks, alertas, archivado y reemplazo.
+
+Criterio de éxito: cambiar una conexión externa no obliga a reconstruir clientes ni pierde historial comercial.
