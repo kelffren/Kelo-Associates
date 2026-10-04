@@ -315,3 +315,14 @@ Desde un iPhone, sin backend externo, debe poderse:
 - cerrar y volver sin perder el estado local.
 
 El siguiente salto de producto no es añadir más pantallas: es reemplazar mocks por datos reales manteniendo este flujo estable.
+
+
+## 16. Regla obligatoria — Kelo Inbox y conectores
+
+Antes de modificar Inbox, canales, Meta Hub, clientes o conversaciones, leer `KELO_INBOX_ARCHITECTURE.md` además de `MEMORY.md` y `ROADMAP.md`.
+
+Principio permanente: **ProviderConnection/Channel son reemplazables; Client y su historial son durables.** No usar IDs externos como identidad primaria del cliente. Desconectar una cuenta no elimina conversaciones, ventas, citas, notas ni attribution histórica.
+
+`kelo-inbox-core.js` contiene el primer núcleo desacoplado para conexiones, channels, capabilities, identity resolution y merges auditables. Integrarlo progresivamente; no crear un segundo Inbox paralelo.
+
+Marketplace solo se considera integración de mensajería cuando exista acceso oficial y autorizado a esa capacidad. Si no, conservarlo como fuente/atribución CRM y marcarlo read-only/manual.
