@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820">
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#eaf4ff}.h{font-size:38px;font-weight:800}.s{font-size:18px;fill:#9fc7e8}.t{font-size:20px;font-weight:700}.b{font-size:15px;fill:#c7d9e8}.card{fill:#10283a;stroke:#24506d;stroke-width:2}.accent{fill:#129cff}.pill{fill:#173e58}.muted{fill:#0a1c29}
+</style>
+<rect width="1200" height="820" fill="#061722"/>
+<text x="42" y="62" class="h">Kelo Inbox</text><text x="42" y="92" class="s">Todas tus conversaciones y clientes, aunque cambien las cuentas.</text>
+<rect x="35" y="125" rx="18" width="270" height="610" class="card"/><text x="58" y="165" class="t">1. Conexiones</text>
+<text x="58" y="193" class="b">Añadir, reautorizar, archivar</text>
+<g class="b"><rect x="55" y="220" rx="12" width="230" height="62" class="pill"/><text x="72" y="247">Facebook principal</text><text x="72" y="269">● conectada · 47 chats</text>
+<rect x="55" y="296" rx="12" width="230" height="62" class="pill"/><text x="72" y="323">Facebook secundaria</text><text x="72" y="345">● conectada · 19 chats</text>
+<rect x="55" y="372" rx="12" width="230" height="62" class="pill"/><text x="72" y="399">Instagram</text><text x="72" y="421">● conectada</text>
+<rect x="55" y="448" rx="12" width="230" height="62" class="pill"/><text x="72" y="475">WhatsApp</text><text x="72" y="497">● conectada</text>
+<rect x="55" y="540" rx="12" width="230" height="55" class="accent"/><text x="85" y="574" style="font:700 17px sans-serif;fill:white">+ CONECTAR CUENTA</text></g>
+<text x="58" y="640" class="b">Una cuenta puede salir.</text><text x="58" y="663" class="b">El historial NO desaparece.</text>
+
+<rect x="325" y="125" rx="18" width="410" height="610" class="card"/><text x="350" y="165" class="t">2. Inbox unificado</text>
+<text x="350" y="193" class="b">Todos · cuenta · sin responder · follow-up</text>
+<g><rect x="345" y="220" rx="12" width="370" height="82" class="pill"/><text x="365" y="249" class="t">Juan Pérez</text><text x="365" y="274" class="b">FB principal · “¿Sigue disponible?”</text>
+<rect x="345" y="316" rx="12" width="370" height="82" class="pill"/><text x="365" y="345" class="t">María López</text><text x="365" y="370" class="b">Instagram · “¿Me envías fotos?”</text>
+<rect x="345" y="412" rx="12" width="370" height="82" class="pill"/><text x="365" y="441" class="t">Carlos Rivera</text><text x="365" y="466" class="b">WhatsApp · “¿Haces envíos?”</text></g>
+<text x="350" y="545" class="t">Identidad global</text><text x="350" y="575" class="b">FB Juan + IG Juan + teléfono</text><rect x="350" y="595" rx="12" width="220" height="45" class="accent"/><text x="373" y="624" style="font:700 15px sans-serif;fill:white">UNIFICAR CLIENTE</text>
+<text x="350" y="680" class="b">Nunca merge automático solo por nombre/avatar.</text>
+
+<rect x="755" y="125" rx="18" width="410" height="380" class="card"/><text x="780" y="165" class="t">3. Cliente + conversación</text>
+<text x="780" y="197" class="b">Juan Pérez · origen: FB principal</text>
+<rect x="785" y="225" rx="14" width="330" height="55" fill="#e8eef3"/><text x="805" y="258" style="font:15px sans-serif;fill:#22313b">Hola, ¿sigues teniendo el reloj?</text>
+<rect x="835" y="298" rx="14" width="280" height="70" class="accent"/><text x="855" y="328" style="font:15px sans-serif;fill:white">Sí. Te envío fotos y detalles.</text><text x="855" y="350" style="font:15px sans-serif;fill:white">Podemos coordinar entrega.</text>
+<text x="780" y="410" class="b">Etiquetas: INTERESADO · $285 · NJ · MAÑANA</text><text x="780" y="443" class="b">Notas, cita, envío, venta y timeline sobreviven</text><text x="780" y="466" class="b">aunque la cuenta externa sea reemplazada.</text>
+
+<rect x="755" y="525" rx="18" width="410" height="210" class="card"/><text x="780" y="565" class="t">4. Regla de arquitectura</text>
+<text x="780" y="600" class="b">ProviderConnection → Channel → Conversation</text><text x="780" y="630" class="b">Conversation → Client global Kelo</text>
+<text x="780" y="675" class="t">Cuenta = reemplazable</text><text x="780" y="706" class="t">Cliente + historial = permanente</text>
+<text x="40" y="790" class="s">Fuente funcional: KELO_INBOX_ARCHITECTURE.md · No fingir capacidades que la API oficial no exponga.</text>
+</svg>
