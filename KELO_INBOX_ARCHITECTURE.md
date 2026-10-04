@@ -177,3 +177,7 @@ El núcleo CRM no conoce detalles de Meta/WhatsApp.
 
 ## 12. Referencia visual
 La infografía de concepto creada el 2026-10-04 define la intención visual: columna de conexiones, Inbox unificado, chat activo, etiquetas/seguimiento, herramientas de venta, métricas y acceso móvil. El archivo binario debe vivir en `docs/kelo-inbox/kelo-inbox-concept.png` cuando se cargue al repositorio; esta especificación es la fuente de verdad funcional aunque cambie el diseño.
+
+
+## 13. Capa Kelo Intelligence
+Las conexiones alimentan una capa de supervisión separada definida en `KELO_INTELLIGENCE.md`. Esta capa puede analizar simultáneamente múltiples cuentas Facebook/Instagram/WhatsApp autorizadas, incluso cuando las respuestas originales hayan sido generadas por Meta AI. El CRM conserva attribution por mensaje y Kelo Intelligence decide qué requiere revisión; no se acopla al proveedor ni necesita controlar su IA.
