@@ -670,3 +670,7 @@ Archivos: `KELO_INTELLIGENCE.md` (contrato/arquitectura) y `kelo-intelligence.js
 Roadmap de implementación: (1) Attention Center mock sobre datos actuales; (2) persistir signals/runs; (3) endpoint manual; (4) worker horario; (5) adapter OpenAI backend con salida estructurada; (6) attribution customer/human/meta_ai/kelo_ai; (7) push móvil con dedupe/cooldown/deep-link; (8) feedback del operador para calibrar scores con cierres reales; (9) métricas por cuenta y por IA; (10) recomendaciones de next-best-action basadas en resultados históricos.
 
 Principio: Kelo Intelligence supervisa y filtra. No necesita controlar la IA de Meta ni enviar mensajes para producir valor.
+
+
+### Estado visual — 2026-10-04
+Kelo Intelligence ya tiene interfaz visible dentro de la app, no solo arquitectura. La nueva vista `Intelligence` incluye hero operativo, botón `Analizar ahora`, KPIs de atención/dinero/IA atascada/notificaciones, carrusel de cuentas, Attention Center con razones visibles, filtros y Connection Center. Los datos actuales son DEMO VISUAL y deben permanecer identificados como tales hasta conectar backend/APIs reales. Archivos: `kelo-inbox-ui.css`, `kelo-inbox-ui.js` e integración en `index.html`.
