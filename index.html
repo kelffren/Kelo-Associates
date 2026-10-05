@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="auth.css">
   <link rel="stylesheet" href="organizer.css">
+  <link rel="stylesheet" href="kelo-inbox-ui.css">
   <title>Kelo Associates</title>
 </head>
 <body>
@@ -49,6 +50,38 @@
       <div class="screenhead"><div><h2>Chats</h2><p>Una bandeja limpia para tres canales y un cliente único.</p></div><button class="iconbtn" id="markAllRead" aria-label="Marcar todo revisado">✓</button></div>
       <div class="toolbar" style="margin-bottom:10px" aria-label="Filtros de chat"><button class="pill active" data-chat-filter="all">Todos</button><button class="pill" data-chat-filter="unread">Sin responder</button><button class="pill" data-chat-filter="hot">HOT</button><button class="pill" data-chat-filter="followup">Follow-up</button></div>
       <div class="card" id="chatList"></div>
+    </section>
+
+    <section class="screen" data-screen="intelligence">
+      <div class="screenhead"><div><h2>Intelligence</h2><p>Una capa de supervisión para todas tus cuentas y conversaciones.</p></div><span class="demo-badge">DEMO VISUAL</span></div>
+      <div class="intel-hero">
+        <span class="eyebrow">Kelo Intelligence</span>
+        <h3>Qué necesita tu atención y dónde puede estar el dinero.</h3>
+        <p>Analiza señales de todas las cuentas conectadas, explica por qué prioriza cada chat y te prepara una cola clara de intervención.</p>
+        <div class="intel-hero-actions"><button class="intel-primary" id="intelAnalyzeNow" type="button">Analizar ahora</button><button class="intel-secondary" type="button" data-go="chats">Abrir Inbox</button></div>
+        <div class="intel-status"><span class="intel-dot"></span><span id="intelLastRun">Programado: cada hora · backend pendiente</span></div>
+      </div>
+      <div class="intel-kpis" style="margin-top:12px">
+        <div class="intel-kpi"><strong id="intelAttentionCount">0</strong><span>Necesitan atención</span></div>
+        <div class="intel-kpi"><strong id="intelMoneyCount">0</strong><span>Oportunidades de dinero</span></div>
+        <div class="intel-kpi"><strong id="intelAiCount">0</strong><span>IA atascada</span></div>
+        <div class="intel-kpi"><strong id="intelPushCount">0</strong><span>Candidatos a notificación</span></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="sectiontitle"><div><h3>Cuentas</h3><span class="muted">Todas separadas, un solo control</span></div><button data-go="more">Gestionar</button></div>
+        <div class="account-strip" id="intelAccounts"></div>
+      </div>
+      <div class="intel-grid cols">
+        <div class="card">
+          <div class="sectiontitle"><div><h3>Attention Center</h3><span class="muted">Ordenado por prioridad</span></div></div>
+          <div class="intel-tabs"><button class="active" data-intel-filter="all">Todo</button><button data-intel-filter="attention">Atención</button><button data-intel-filter="money">Probable dinero</button><button data-intel-filter="ai">IA atascada</button></div>
+          <div class="attention-list" id="intelAttentionList"></div>
+        </div>
+        <div class="card">
+          <div class="sectiontitle"><div><h3>Connection Center</h3><span class="muted">Estado visual de cuentas</span></div></div>
+          <div class="connection-manager" id="intelConnections"></div>
+        </div>
+      </div>
     </section>
 
     <section class="screen" data-screen="clients">
@@ -118,6 +151,7 @@
   <nav class="bottomnav" aria-label="Navegación principal">
     <button class="navbtn active" data-target="today"><span aria-hidden="true">⌂</span><span>Hoy</span></button>
     <button class="navbtn" data-target="chats"><span aria-hidden="true">◌</span><span>Chats</span></button>
+    <button class="navbtn" data-target="intelligence"><span aria-hidden="true">✦</span><span>AI</span></button>
     <button class="navbtn" data-target="clients"><span aria-hidden="true">◎</span><span>Clientes</span></button>
     <button class="navbtn" data-target="agenda"><span aria-hidden="true">▣</span><span>Agenda</span></button>
     <button class="navbtn" data-target="more"><span aria-hidden="true">•••</span><span>Más</span></button>
@@ -135,5 +169,6 @@
 <script type="module" src="auth.js"></script>
 <script type="module" src="app.js"></script>
 <script type="module" src="organizer.js"></script>
+<script type="module" src="kelo-inbox-ui.js"></script>
 </body>
 </html>
