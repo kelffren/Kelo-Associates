@@ -1,4 +1,4 @@
-const BUILD='e3861864876eb1ec014fc8dd07c87fdf1ba968c8';
+const BUILD='a45d78568e00c57371779f234763bc1efbde32a8';
 const CACHE=`kelo-associates-${BUILD.slice(0,12)}`;
 const CORE=['./','./index.html','./styles.css','./auth.css','./organizer.css','./auth.js','./organizer.js','./updater.js','./contact-vault.js','./vault-identity.js','./meta-hub.js','./whatsapp-test-bridge.js','./app.js','./data.js','./integrations.js','./retail-engine.js','./backend-client.js','./supabase-auth.js','./remote-sync.js','./voice.html','./voice.css','./voice.js','./voice-core.js','./manifest.webmanifest','./icon.svg'];
 
